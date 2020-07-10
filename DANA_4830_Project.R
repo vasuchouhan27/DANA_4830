@@ -126,32 +126,32 @@ mastercopy1<-mastercopy1[,which(colMeans(!is.na(mastercopy1)) > 0.1)]
 vis_miss(mastercopy1)
 dim(mastercopy1)
 
-#to fill zero in multiple choice questions
-#We Start with Q5
-names(mastercopy1[10:15])
-mastercopy1[10:15][is.na(mastercopy1[10:15])] <- 0
-
-#with Q12
-lapply(mastercopy1,names)[33:37]
-mastercopy1[33:37][is.na(mastercopy1[33:37])] <- 0
-
-#with Q13
-names(mastercopy1[38:42])
-mastercopy1[38:42][is.na(mastercopy1[38:42])] <- 0
-
-#with Q15
-names(mastercopy1)[44:48]
-mastercopy1[44:48][is.na(mastercopy1[44:48])] <- 0
-
-#with Q16
-names(mastercopy1)[49:51]
-mastercopy1[49:51][is.na(mastercopy1[49:51])] <- 0
-
-#with Q19
-names(mastercopy1)[61:66]
-mastercopy1[61:66][is.na(mastercopy1[61:66])] <- 0
-dim(mastercopy1)
-vis_miss(mastercopy1)
+  #to fill zero in multiple choice questions
+  #We Start with Q5
+  names(mastercopy1[10:15])
+  mastercopy1[10:15][is.na(mastercopy1[10:15])] <- 0
+  
+  #with Q12
+  lapply(mastercopy1,names)[33:37]
+  mastercopy1[33:37][is.na(mastercopy1[33:37])] <- 0
+  
+  #with Q13
+  names(mastercopy1[38:42])
+  mastercopy1[38:42][is.na(mastercopy1[38:42])] <- 0
+  
+  #with Q15
+  names(mastercopy1)[44:48]
+  mastercopy1[44:48][is.na(mastercopy1[44:48])] <- 0
+  
+  #with Q16
+  names(mastercopy1)[49:51]
+  mastercopy1[49:51][is.na(mastercopy1[49:51])] <- 0
+  
+  #with Q19
+  names(mastercopy1)[61:66]
+  mastercopy1[61:66][is.na(mastercopy1[61:66])] <- 0
+  dim(mastercopy1)
+  vis_miss(mastercopy1)
 
 #deleting all null values
 mastercopy2 <- mastercopy1
@@ -162,3 +162,94 @@ vis_miss(mastercopy2)
 write.csv(mastercopy2,"final.csv", row.names = FALSE)
 
 ##Make Sure Q12,Q13 and Q19 are of making orders
+
+names(mastercopy2[6:19])
+
+#PCA
+
+
+# A. KNOWLEGDE
+res.pca1 <- prcomp(mastercopy2[6:19],scale= TRUE)  
+summary(res.pca1)
+
+library("factoextra")
+eig.val1 <- get_eigenvalue(res.pca1)
+eig.val1
+
+dimT1 <- c(1:14)
+dimT1
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca1)
+
+#Loading Score
+fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+
+
+# B. ATTITUDE AND PERCEPTION
+names(mastercopy2[20:26])
+res.pca2 <- prcomp(mastercopy2[20:26],scale= TRUE)  
+summary(res.pca2)
+
+library("factoextra")
+eig.val2 <- get_eigenvalue(res.pca2)
+eig.val2
+
+dimT2 <- c(1:7)
+dimT2
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca2)
+
+#Loading Score
+fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+
+# c. SOCIAL NORMS AFFECTING PLASTIC CHANGING INTENTION AND BEHAVIORS
+names(mastercopy2[27:31])
+res.pca3 <- prcomp(mastercopy2[27:31],scale= TRUE)  
+summary(res.pca3)
+
+library("factoextra")
+eig.val3 <- get_eigenvalue(res.pca3)
+eig.val3
+
+dimT3 <- c(1:5)
+dimT3
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT3, eig.val3$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca3)
+
+#Loading Score
+fviz_pca_var(res.pca3,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+# D. PERCEIVED BEHAVIOR CONTROL OVER PLASTIC BEHAVIOR INTENTION AND BEHAVIORAL CHANGE
+names(mastercopy2[32:48])
+res.pca4 <- prcomp(mastercopy2[32:48],scale= TRUE)  
+summary(res.pca4)
+
+library("factoextra")
+eig.val4 <- get_eigenvalue(res.pca4)
+eig.val4
+
+dimT4 <- c(1:17)
+dimT4
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT4, eig.val4$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca4)
+
+#Loading Score
+fviz_pca_var(res.pca4,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
