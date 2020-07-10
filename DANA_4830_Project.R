@@ -1,13 +1,13 @@
 # Checking Accuracy of Data
 
 #Import the data and make copy of data
-master <- read.csv("D:/Term3/Stats 1/New folder/Data-screening-1 (1).csv")
+master <- read.csv("Data-screening-1 (1).csv")
 mastercopy <- master
 
 #Checking names of columns and remove all those column which are not in appendix or not relative to study.
 names(mastercopy)
 
-#droppping unnesscry rows
+#dropping unecesscory rows
 mastercopy <- mastercopy[,-c(1:16), drop=FALSE]
 names(mastercopy)
 
@@ -114,12 +114,12 @@ dim((mastercopy))
 # Missing Values
 #Lets have a look on the missing values in our data.
 mastercopy1<-mastercopy
-write.csv(mastercopy1,"C:\\Users\\vasu2\\Desktop\\mastercopy1.csv", row.names = FALSE)
-mastercopy1<-read.csv("C:\\Users\\vasu2\\Desktop\\mastercopy1.csv",stringsAsFactors = FALSE)
+write.csv(mastercopy1,"mastercopy1.csv", row.names = FALSE)
+mastercopy1<-read.csv("mastercopy1.csv",stringsAsFactors = FALSE)
 library("naniar")
 vis_miss(mastercopy1)
 
-# To delete the columns which are having more tha 90% DAta 
+# To delete the columns which are having more than 90% DAta 
 # To delete the rows which are having more than 50% data
 mastercopy1<-mastercopy1[which(rowMeans(!is.na(mastercopy1)) > 0.5), ]
 mastercopy1<-mastercopy1[,which(colMeans(!is.na(mastercopy1)) > 0.1)]
@@ -128,61 +128,37 @@ dim(mastercopy1)
 
 #to fill zero in multiple choice questions
 #We Start with Q5
-names(mastercopy1[10:16])
-mastercopy1[10:16][is.na(mastercopy1[10:16])] <- 0
-lapply(mastercopy1[10:16],summary)
+names(mastercopy1[10:15])
+mastercopy1[10:15][is.na(mastercopy1[10:15])] <- 0
 
 #with Q12
-lapply(mastercopy1,names)[33:38]
-mastercopy1[33:38][is.na(mastercopy1[33:38])] <- 0
-lapply(mastercopy1[33:38],summary)
+lapply(mastercopy1,names)[33:37]
+mastercopy1[33:37][is.na(mastercopy1[33:37])] <- 0
 
 #with Q13
-names(mastercopy1[39:44])
-mastercopy1[39:44][is.na(mastercopy1[39:44])] <- 0
+names(mastercopy1[38:42])
+mastercopy1[38:42][is.na(mastercopy1[38:42])] <- 0
 
 #with Q15
-names(mastercopy1)[46:51]
-mastercopy1[46:51][is.na(mastercopy1[46:51])] <- 0
-lapply(mastercopy1[46:51],summary)
+names(mastercopy1)[44:48]
+mastercopy1[44:48][is.na(mastercopy1[44:48])] <- 0
 
 #with Q16
-names(mastercopy1)[52:56]
-mastercopy1[52:56][is.na(mastercopy1[52:56])] <- 0
-lapply(mastercopy1[52:56], summary)
+names(mastercopy1)[49:51]
+mastercopy1[49:51][is.na(mastercopy1[49:51])] <- 0
 
 #with Q19
-names(mastercopy1)[66:71]
-mastercopy1[66:71][is.na(mastercopy1[66:71])] <- 0
+names(mastercopy1)[61:66]
+mastercopy1[61:66][is.na(mastercopy1[61:66])] <- 0
 dim(mastercopy1)
 vis_miss(mastercopy1)
 
-#Make Another copy of data
-mastercopy2<-mastercopy1
-# To delete the columns which are having more tha 90% DAta 
-# To delete the rows which are having more than 50% data
-mastercopy2<-mastercopy2[which(rowMeans(!is.na(mastercopy2)) > 0.5), ]
-mastercopy2<-mastercopy2[,which(colMeans(!is.na(mastercopy2)) > 0.1)]
+#deleting all null values
+mastercopy2 <- mastercopy1
+mastercopy2<-na.omit(mastercopy2)
 vis_miss(mastercopy2)
-dim(mastercopy2)
-
-#As we can see, there are no row and column falls under this category.
-
-#Fill out all missing values with "MICE"
-library(mice)
-impute <- mice(mastercopy2,m=3)
-print(impute)
-final <- complete(impute,1)
-vis_miss(final)
-dim(final)
 
 #Finally import the Final data set
-write.csv(final,"D:\\Term3\\DANA_4830_Project\\final.csv", row.names = FALSE)
-
-m <- read.csv("D:\\Term3\\DANA_4830_Project\\final.csv")
+write.csv(mastercopy2,"final.csv", row.names = FALSE)
 
 
-dim(m)
-
-
-# this is by manoj 
