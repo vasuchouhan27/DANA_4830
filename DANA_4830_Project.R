@@ -114,7 +114,6 @@ dim((mastercopy))
 # Missing Values
 #Lets have a look on the missing values in our data.
 mastercopy1<-mastercopy
-write.csv(mastercopy1,"mastercopy1.csv", row.names = FALSE)
 mastercopy1<-read.csv("mastercopy1.csv",stringsAsFactors = FALSE)
 library("naniar")
 vis_miss(mastercopy1)
@@ -178,7 +177,6 @@ eig.val1 <- get_eigenvalue(res.pca1)
 eig.val1
 
 dimT1 <- c(1:14)
-dimT1
 
 #Plot the cumulative percentage variance accounted for versus the index of the Components 
 plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
@@ -186,7 +184,6 @@ plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",
 #StreePlot
 fviz_eig(res.pca1)
 
-#Loading Score
 fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
 
@@ -234,6 +231,9 @@ fviz_eig(res.pca3)
 #Loading Score
 fviz_pca_var(res.pca3,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
+#summary(mastercopy2[27:31])
+#plot(cor(mastercopy2[27:31]))
+
 # D. PERCEIVED BEHAVIOR CONTROL OVER PLASTIC BEHAVIOR INTENTION AND BEHAVIORAL CHANGE
 names(mastercopy2[32:48])
 res.pca4 <- prcomp(mastercopy2[32:48],scale= TRUE)  
@@ -254,3 +254,64 @@ fviz_eig(res.pca4)
 
 #Loading Score
 fviz_pca_var(res.pca4,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+# E. Plastic Related Behaviour 
+names(mastercopy2[49:56])
+res.pca5 <- prcomp(mastercopy2[49:56],scale= TRUE)  
+summary(res.pca5)
+
+library("factoextra")
+eig.val5 <- get_eigenvalue(res.pca5)
+eig.val5
+
+dimT5 <- c(1:8)
+dimT5
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT5, eig.val5$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca5)
+#Loading Score
+fviz_pca_var(res.pca5,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+# F Intention to change Behaviour 
+names(mastercopy2[57:60])
+res.pca6 <- prcomp(mastercopy2[57:60],scale= TRUE)  
+summary(res.pca6)
+
+library("factoextra")
+eig.val6 <- get_eigenvalue(res.pca6)
+eig.val6
+
+dimT6 <- c(1:4)
+dimT6
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT6, eig.val6$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca6)
+#Loading Score
+fviz_pca_var(res.pca6,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+# G Communication related plastics 
+names(mastercopy2[61:66])
+res.pca7 <- prcomp(mastercopy2[61:66],scale= TRUE)  
+summary(res.pca7)
+
+library("factoextra")
+eig.val7 <- get_eigenvalue(res.pca6)
+eig.val7
+
+dimT7 <- c(1:4)
+dimT7
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT7, eig.val7$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca7)
+#Loading Score
+fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
