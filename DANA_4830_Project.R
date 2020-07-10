@@ -183,3 +183,6 @@ m <- read.csv("D:\\Term3\\DANA_4830_Project\\final.csv")
 
 
 dim(m)
+
+
+# this is by manoj 
