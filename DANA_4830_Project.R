@@ -161,4 +161,4 @@ vis_miss(mastercopy2)
 #Finally import the Final data set
 write.csv(mastercopy2,"final.csv", row.names = FALSE)
 
-
+##Make Sure Q12,Q13 and Q19 are of making orders
