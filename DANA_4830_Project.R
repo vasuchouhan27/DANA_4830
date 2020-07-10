@@ -161,6 +161,28 @@ vis_miss(mastercopy2)
 #Finally import the Final data set
 write.csv(mastercopy2,"final.csv", row.names = FALSE)
 
+testSet <- read.csv("final.csv")
+#removing Q5
+New.testSet <- testSet[,!grepl("Q5", colnames(testSet))]
+
+# Q12
+New.testSet <- New.testSet[,!grepl("Q12", colnames(New.testSet))]
+
+#Q13
+New.testSet <- New.testSet[,!grepl("Q13", colnames(New.testSet))]
+
+#Q15
+New.testSet <- New.testSet[,!grepl("Q15", colnames(New.testSet))]
+
+#Q16
+New.testSet <- New.testSet[,!grepl("Q16", colnames(New.testSet))]
+
+#Q19
+New.testSet <- New.testSet[,!grepl("Q19", colnames(New.testSet))]
+
+New.testSet
+summary(testSet["Q10C6"])
+
 ##Make Sure Q12,Q13 and Q19 are of making orders
 
 names(mastercopy2[6:19])
