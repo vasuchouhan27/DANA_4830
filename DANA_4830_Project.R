@@ -343,3 +343,4 @@ fviz_eig(res.pca7)
 fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
 #arash cp smd
+ #vivek wants to check
