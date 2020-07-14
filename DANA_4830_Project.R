@@ -155,10 +155,18 @@ dim(mastercopy1)
   dim(mastercopy1)
   vis_miss(mastercopy1)
 
-#deleting all null values
-mastercopy2 <- mastercopy1
-mastercopy2<-na.omit(mastercopy2)
-vis_miss(mastercopy2)
+#Summary of the data
+summary(mastercopy1)
+  
+#Applying Mice to fill null values
+install.packages("mice")
+library(mice)
+nomissdf= mice(mastercopy1)
+df1=complete(nomissdf,1)
+summary(df1)
+vis_miss(df1)
+
+mastercopy2 <- df1
 
 #Finally import the Final data set
 write.csv(mastercopy2,"final.csv", row.names = FALSE)
@@ -166,9 +174,27 @@ write.csv(mastercopy2,"final.csv", row.names = FALSE)
 
 ##Make Sure Q12,Q13 and Q19 are of making orders
 
-names(mastercopy2[6:19])
+names(mastercopy2[1:5])
+
 
 #PCA
+res.pca0 <- prcomp(mastercopy2[1:5],scale= TRUE)  
+summary(res.pca0)
+
+library("factoextra")
+eig.val0 <- get_eigenvalue(res.pca0)
+eig.val0
+
+dimT0 <- c(1:5)
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT0, eig.val0$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca0)
+
+#Loading score
+fviz_pca_var(res.pca0,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
 
 # A. KNOWLEGDE
@@ -187,6 +213,7 @@ plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",
 #StreePlot
 fviz_eig(res.pca1)
 
+#Loading score
 fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
 
@@ -318,3 +345,4 @@ fviz_eig(res.pca7)
 #Loading Score
 fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
+#
