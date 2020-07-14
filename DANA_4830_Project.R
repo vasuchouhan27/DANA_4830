@@ -152,10 +152,18 @@ dim(mastercopy1)
   dim(mastercopy1)
   vis_miss(mastercopy1)
 
-#deleting all null values
-mastercopy2 <- mastercopy1
-mastercopy2<-na.omit(mastercopy2)
-vis_miss(mastercopy2)
+#Summary of the data
+summary(mastercopy1)
+  
+#Applying Mice to fill null values
+install.packages("mice")
+library(mice)
+nomissdf= mice(mastercopy1)
+df1=complete(nomissdf,1)
+summary(df1)
+vis_miss(df1)
+
+mastercopy2 <- df1
 
 #Finally import the Final data set
 write.csv(mastercopy2,"final.csv", row.names = FALSE)
