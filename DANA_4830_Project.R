@@ -39,6 +39,7 @@ mastercopy<-mastercopy[!(mastercopy["Age"] >100),]
 #Income
 #as one enntry is "30000" it falls under the category of 3 so to change it.
 mastercopy$Income[mastercopy$Income=="30000"] <- "3"
+str(mastercopy)
 mastercopy$Income <-strtoi(mastercopy$Income)
 dim(mastercopy)
 
@@ -82,6 +83,8 @@ mastercopy$Q13C3 <- factor(mastercopy$Q13C3, levels = c(1,2,3))
 mastercopy$Q13C4 <- factor(mastercopy$Q13C4, levels = c(1,2,3))
 mastercopy$Q13C5 <- factor(mastercopy$Q13C5, levels = c(1,2,3))
 mastercopy$Q13C6 <- factor(mastercopy$Q13C6, levels = c(1,2,3))
+
+
 
 ### Start checking accuarcy for the columns containing PLASTIC - RELATED BEHAVIORS.
 #We check for the unique values.
@@ -170,14 +173,17 @@ write.csv(mastercopy2,"final.csv", row.names = FALSE)
 
 
 ##Make Sure Q12,Q13 and Q19 are of making orders
-
+#it is priority based. For Q19 we have 6 options
+#19c1 to 19c6 and first row has values 2,3,4,5,1,6 in order
+#or priorities for the first person.
 names(mastercopy2[1:5])
 
 
 #PCA
 res.pca0 <- prcomp(mastercopy2[1:5],scale= TRUE)  
 summary(res.pca0)
-
+plot(res.pca0)
+screeplot(res.pca0,type="line",main="Scree Plot")
 library("factoextra")
 eig.val0 <- get_eigenvalue(res.pca0)
 eig.val0
