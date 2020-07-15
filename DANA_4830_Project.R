@@ -8,7 +8,7 @@ mastercopy <- master
 names(mastercopy)
 
 #dropping unecesscory rows
-mastercopy <- mastercopy[,-c(1:16), drop=FALSE]
+mastercopy <- mastercopy[,-c(1:16)]
 names(mastercopy)
 
 #dimension of the data set
@@ -34,8 +34,8 @@ library("stringr")
 mastercopy$Age <-str_replace_all(mastercopy$Age, "[abcdefgfhijklmanopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]", NA_character_)
 mastercopy$Age <-strtoi(mastercopy$Age)
 #It makes no sense if the person age more than 100 or less tha 5 contribute in survey.
-mastercopy<-mastercopy[!(mastercopy["Age"] <5),]
-mastercopy<-mastercopy[!(mastercopy["Age"] >100),]
+mastercopy$Age[(mastercopy["Age"] < 5)] = NA
+mastercopy$Age[(mastercopy["Age"] >100)] =NA 
 #Income
 #as one enntry is "30000" it falls under the category of 3 so to change it.
 mastercopy$Income[mastercopy$Income=="30000"] <- "3"
@@ -120,6 +120,7 @@ mastercopy1<-mastercopy
 mastercopy1<-read.csv("mastercopy1.csv",stringsAsFactors = FALSE)
 library("naniar")
 vis_miss(mastercopy1)
+dim(mastercopy1)
 
 # To delete the columns which are having more than 90% DAta 
 # To delete the rows which are having more than 50% data
@@ -140,6 +141,7 @@ dim(mastercopy1)
   #with Q13
   names(mastercopy1[38:42])
   mastercopy1[38:42][is.na(mastercopy1[38:42])] <- 0
+  mastercopy1[38:42][mastercopy1[38:42] > 1] <- 1
   
   #with Q15
   names(mastercopy1)[44:48]
@@ -348,5 +350,41 @@ fviz_eig(res.pca7)
 #Loading Score
 fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
-#arash cp smd
- #vivek wants to check
+library(factoextra)
+
+
+
+
+#TRY FOR FA
+
+#Factor Analysis on first part
+library(psych)
+decidefactor <- fa.parallel(mastercopy2[1:5],fm ='ml', fa = 'fa') 
+
+#Kaiser criteria ## check factor loadings 0.7 or greater 
+sum(decidefactor$fa.values >1) #old
+sum(decidefactor$fa.values >0.7) #new
+
+fa1 <- factanal(mastercopy2[1:5], factors = 1, rotation = "promax")
+fa1
+print(fa1,cutoff=0.3,sort=TRUE)
+
+# A. KNOWLEGDE
+decidefactor <- fa.parallel(mastercopy2[6:19],fm ='ml', fa = 'fa') 
+
+#Kaiser criteria ## check factor loadings 0.7 or greater 
+sum(decidefactor$fa.values >1) #old
+sum(decidefactor$fa.values >0.7) #new
+fa2 <- factanal(mastercopy2[6:19], factors = 1, rotation = "promax")
+fa2
+print(fa1,cutoff=0.3,sort=TRUE)
+
+# B. ATTITUDE AND PERCEPTION
+decidefactor <- fa.parallel(mastercopy2[20:26],fm ='ml', fa = 'fa') 
+
+#Kaiser criteria ## check factor loadings 0.7 or greater 
+sum(decidefactor$fa.values >1) #old
+sum(decidefactor$fa.values >0.7) #new
+
+
+
