@@ -6,7 +6,7 @@ mastercopy <- master
 
 #Checking names of columns and remove all those column which are not in appendix or not relative to study.
 names(mastercopy)
-
+dim(mastercopy)
 #dropping unecesscory rows
 mastercopy <- mastercopy[,-c(1:16)]
 names(mastercopy)
@@ -30,6 +30,9 @@ lapply(mastercopy, unique)[1:5]
 mastercopy$Gender <- factor(mastercopy$Gender, levels = c(1,2))
 #Age
 mastercopy$Age[mastercopy$Age=="16 years-old"] <- "16"
+#mastercopy$Age[mastercopy$Age=="1970"] <- "16"
+#mastercopy$Age[mastercopy$Age=="16 years-old"] <- "16"
+
 library("stringr")
 mastercopy$Age <-str_replace_all(mastercopy$Age, "[abcdefgfhijklmanopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]", NA_character_)
 mastercopy$Age <-strtoi(mastercopy$Age)
@@ -72,7 +75,7 @@ mastercopy <- select(mastercopy, -Q12C8)
 #Now update other column as needed according to appedix.
 
 mastercopy$Q12C1 <- factor(mastercopy$Q12C1, levels = c(1,2,3,4,5,6))
-mastercopy$Q12C2 <- factor(mastercopy$Q12C2, levels = c(1,2,3,4,5,6))
+ mastercopy$Q12C2 <- factor(mastercopy$Q12C2, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C3 <- factor(mastercopy$Q12C3, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C4 <- factor(mastercopy$Q12C4, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C5 <- factor(mastercopy$Q12C5, levels = c(1,2,3,4,5,6))
