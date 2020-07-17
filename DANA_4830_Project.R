@@ -356,7 +356,7 @@ fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00A
 #DA
 #try1
 library(MASS)
-da1 <- lda(Q14C~Gender+Age+Education+Occupation+Income,data=mastercopy2)
+da1 <- qda(Q14C~Gender+Age+Education+Occupation+Income,data=mastercopy2)
 da1
 
 #LDA preduction
