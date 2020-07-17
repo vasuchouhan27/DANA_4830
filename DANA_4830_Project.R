@@ -471,6 +471,7 @@ table(mastercopy2[,c("Gender","Q9K")])[1,]/sum(table(mastercopy2[,c("Gender","Q9
 table(mastercopy2[,c("Gender","Q9K")])[2,]/sum(table(mastercopy2[,c("Gender","Q9K")])[2,])*100
 
 #Running PCA
+
 # A. KNOWLEGDE
 res.pca1 <- prcomp(mastercopy2[,c("q1k","q2k","q3k","q4k","Q5K1","Q5K2","Q5K3","Q5K4","Q5K5","Q6K","Q7K","Q8K","Q9K")])  
 res.pca1
@@ -493,7 +494,7 @@ fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00A
 #MOST variation is among Q1, Q8 and Q3
 
 #Running DA
-Gender_Knowledge_DA <- lda(Gender~q1k+Q8K,data=mastercopy2)
+Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K+Q8K,data=mastercopy2)
 Gender_Knowledge_DA
 
 #LDA preduction
@@ -503,7 +504,15 @@ accuracy <- table(lda.testing$class,mastercopy2$Gender)
 accuracy
 sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
-#Model
-linearmodel <- lm(Gender~q2k+q4k+Q6K+Q7K+Q9K,data = mastercopy2)
-summary(linearmodel)
+##
+#Percentage for Education vs q1k
+table(mastercopy2[,c("Education","q1k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
+table(mastercopy2[,c("Education","q1k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
+table(mastercopy2[,c("Education","q1k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
+table(mastercopy2[,c("Income","q1k")])
+
+#Percentage for income vs q1k
+table(mastercopy2[,c("Income","q1k")])[1,]/sum(table(mastercopy2[,c("Income","q1k")])[1,])*100
+table(mastercopy2[,c("Income","q1k")])[2,]/sum(table(mastercopy2[,c("Income","q1k")])[2,])*100
+table(mastercopy2[,c("Income","q1k")])[3,]/sum(table(mastercopy2[,c("Income","q1k")])[3,])*100
 
