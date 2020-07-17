@@ -353,92 +353,166 @@ fviz_eig(res.pca7)
 #Loading Score
 fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
-#DA
-#try1
-library(MASS)
-da1 <- qda(Q14C~Gender+Age+Education+Occupation+Income,data=mastercopy2)
-da1
+
+
+####Influence on gender on knowledge
+
+Gender_Knowledge =mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
+
+Gender_Knowledge_DA <- lda(Gender~q1k+q2k+q3k+q4k+Q6K+Q7K+Q8K+Q9K,data=Gender_Knowledge)
+Gender_Knowledge_DA
 
 #LDA preduction
-lda.testing <- predict(da1)
+lda.testing <- predict(Gender_Knowledge_DA)
 #confusion matrix
-accuracy <- table(lda.testing$class,mastercopy2$Q14C)
+accuracy <- table(lda.testing$class,mastercopy2$Gender)
 accuracy
 sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
-library(psych)
-describe(mastercopy2)
+#FA
+Gender_Knowledge_FA <- factanal(mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")], factors = 4, rotation = "promax")
+Gender_Knowledge_FA
+
+mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
+
+#PCA with gender and knowledge
+res.pca1 <- prcomp(mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")],scale= TRUE)  
+summary(res.pca1)
+
+library("factoextra")
+eig.val1 <- get_eigenvalue(res.pca1)
+eig.val1
+
+dimT1 <- c(1:8)
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca1)
+
+#Loading score
+fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+# Fit the full model 
+full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
+#Stepwise regression
+step.model <- stepAIC(full.model, direction = "both", 
+                      trace = FALSE)
+summary(step.model)
+
+mastercopy3 <- mastercopy2
+mastercopy3$Gender[mastercopy3$Gender==2]=0
++
+#Logistic regression
+Reg_log_Gender_Know<- glm(Gender~ factor(q1k)+factor(q2k)+factor(q3k)+factor(q4k)+factor(Q6K)
+                          +factor(Q7K)+factor(Q8K)+factor(Q9K), family=binomial, data=mastercopy3[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
+summary(Reg_log_Gender_Know)
+
+pchisq(1110.5-1036.7, df = 982-963, lower.tail = FALSE)
+
+Gender_q1k <- mastercopy2[,c("Gender","q1k")] 
+#CHECKING ANSWR OF GENDER VS Q1k
+unique(Gender_q1k)
+219+224
+
+#Checking answer of gender vs Knowlegdge
+table(mastercopy2[,c("Gender","q1k")])
+#Percentage for gender vs q1k
+table(mastercopy2[,c("Gender","q1k")])[1,]/sum(table(mastercopy2[,c("Gender","q1k")])[1,])*100
+table(mastercopy2[,c("Gender","q1k")])[2,]/sum(table(mastercopy2[,c("Gender","q1k")])[2,])*100
+
+#Percentage for gender vs q2k
+table(mastercopy2[,c("Gender","q2k")])[1,]/sum(table(mastercopy2[,c("Gender","q2k")])[1,])*100
+table(mastercopy2[,c("Gender","q2k")])[2,]/sum(table(mastercopy2[,c("Gender","q2k")])[2,])*100
+
+#Percentage for gender vs q3k
+table(mastercopy2[,c("Gender","q3k")])[1,]/sum(table(mastercopy2[,c("Gender","q3k")])[1,])*100
+table(mastercopy2[,c("Gender","q3k")])[2,]/sum(table(mastercopy2[,c("Gender","q3k")])[2,])*100
+
+#Percentage for gender vs q4k
+table(mastercopy2[,c("Gender","q4k")])[1,]/sum(table(mastercopy2[,c("Gender","q4k")])[1,])*100
+table(mastercopy2[,c("Gender","q4k")])[2,]/sum(table(mastercopy2[,c("Gender","q4k")])[2,])*100
+
+#Percentage for gender vs Q5
+table(mastercopy2[,c("Gender","Q5K1")])[1,]/sum(table(mastercopy2[,c("Gender","Q5K1")])[1,])*100
+table(mastercopy2[,c("Gender","Q5K1")])[2,]/sum(table(mastercopy2[,c("Gender","Q5K1")])[2,])*100
+
+table(mastercopy2[,c("Gender","Q5K2")])[1,]/sum(table(mastercopy2[,c("Gender","Q5K2")])[1,])*100
+table(mastercopy2[,c("Gender","Q5K2")])[2,]/sum(table(mastercopy2[,c("Gender","Q5K2")])[2,])*100
+
+table(mastercopy2[,c("Gender","Q5K3")])[1,]/sum(table(mastercopy2[,c("Gender","Q5K3")])[1,])*100
+table(mastercopy2[,c("Gender","Q5K3")])[2,]/sum(table(mastercopy2[,c("Gender","Q5K3")])[2,])*100
+
+table(mastercopy2[,c("Gender","Q5K4")])[1,]/sum(table(mastercopy2[,c("Gender","Q5K4")])[1,])*100
+table(mastercopy2[,c("Gender","Q5K4")])[2,]/sum(table(mastercopy2[,c("Gender","Q5K4")])[2,])*100
+
+table(mastercopy2[,c("Gender","Q5K5")])[1,]/sum(table(mastercopy2[,c("Gender","Q5K5")])[1,])*100
+table(mastercopy2[,c("Gender","Q5K5")])[2,]/sum(table(mastercopy2[,c("Gender","Q5K5")])[2,])*100
+
+table(mastercopy2[,c("Gender","Q5K6")])[1,]/sum(table(mastercopy2[,c("Gender","Q5K6")])[1,])*100
+table(mastercopy2[,c("Gender","Q5K6")])[2,]/sum(table(mastercopy2[,c("Gender","Q5K6")])[2,])*100
 
 
+#Percentage for gender vs Q6K
+table(mastercopy2[,c("Gender","Q6K")])[1,]/sum(table(mastercopy2[,c("Gender","Q6K")])[1,])*100
+table(mastercopy2[,c("Gender","Q6K")])[2,]/sum(table(mastercopy2[,c("Gender","Q6K")])[2,])*100
 
-#Corelation
-cormat <- round(cor(mastercopy2),2)
-head(cormat)
-install.packages("reshape2")
-library(reshape2)
-melted_cormat <- melt(cormat)
-head(melted_cormat)
-library(ggplot2)
-ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
-  geom_tile()
-# Get lower triangle of the correlation matrix
-get_lower_tri<-function(cormat){
-  cormat[upper.tri(cormat)] <- NA
-  return(cormat)
-}
-# Get upper triangle of the correlation matrix
-get_upper_tri <- function(cormat){
-  cormat[lower.tri(cormat)]<- NA
-  return(cormat)
-}
-# Melt the correlation matrix
-library(reshape2)
-melted_cormat <- melt(upper_tri, na.rm = TRUE)
-# Heatmap
-library(ggplot2)
-ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
-  geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
-                       midpoint = 0, limit = c(-1,1), space = "Lab",
-                       name="Pearson\nCorrelation") +
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1,
-                                   size = 12, hjust = 1))+
-  coord_fixed()
-reorder_cormat <- function(cormat){
-  # Use correlation between variables as distance
-  dd <- as.dist((1-cormat)/2)
-  hc <- hclust(dd)
-  cormat <-cormat[hc$order, hc$order]
-}
-# Reorder the correlation matrix
-cormat <- reorder_cormat(cormat)
-upper_tri <- get_upper_tri(cormat)
-# Melt the correlation matrix
-melted_cormat <- melt(upper_tri, na.rm = TRUE)
-# Create a ggheatmap
-ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
-  geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
-                       midpoint = 0, limit = c(-1,1), space = "Lab",
-                       name="Pearson\nCorrelation") +
-  theme_minimal()+ # minimal theme
-  theme(axis.text.x = element_text(angle = 90, vjust = 1,
-                                   size = 8, hjust = 1))+
-  coord_fixed()
-# Print the heatmap
-print(ggheatmap)
-ggheatmap +
-  theme(
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.border = element_blank(),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    legend.justification = c(1, 0),
-    legend.position = c(0.6, 0.7),
-    legend.direction = "horizontal")+
-  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
-                               title.position = "top", title.hjust = 0.5))
+#Percentage for gender vs Q7K
+table(mastercopy2[,c("Gender","Q7K")])[1,]/sum(table(mastercopy2[,c("Gender","Q7K")])[1,])*100
+table(mastercopy2[,c("Gender","Q7K")])[2,]/sum(table(mastercopy2[,c("Gender","Q7K")])[2,])*100
+
+#Percentage for gender vs Q8K
+table(mastercopy2[,c("Gender","Q8K")])[1,]/sum(table(mastercopy2[,c("Gender","Q8K")])[1,])*100
+table(mastercopy2[,c("Gender","Q8K")])[2,]/sum(table(mastercopy2[,c("Gender","Q8K")])[2,])*100
+
+#Percentage for gender vs Q9K
+table(mastercopy2[,c("Gender","Q9K")])[1,]/sum(table(mastercopy2[,c("Gender","Q9K")])[1,])*100
+table(mastercopy2[,c("Gender","Q9K")])[2,]/sum(table(mastercopy2[,c("Gender","Q9K")])[2,])*100
+
+#Running PCA
+
+# A. KNOWLEGDE
+res.pca1 <- prcomp(mastercopy2[,c("q1k","q2k","q3k","q4k","Q5K1","Q5K2","Q5K3","Q5K4","Q5K5","Q6K","Q7K","Q8K","Q9K")])  
+res.pca1
+summary(res.pca1)
+
+library("factoextra")
+eig.val1 <- get_eigenvalue(res.pca1)
+eig.val1
+
+dimT1 <- c(1:13)
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(res.pca1)
+
+#Loading score
+fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+#MOST variation is among Q1, Q8 and Q3
+
+#Running DA
+Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K+Q8K,data=mastercopy2)
+Gender_Knowledge_DA
+
+#LDA preduction
+lda.testing <- predict(Gender_Knowledge_DA)
+#confusion matrix
+accuracy <- table(lda.testing$class,mastercopy2$Gender)
+accuracy
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
+
+##
+#Percentage for Education vs q1k
+table(mastercopy2[,c("Education","q1k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
+table(mastercopy2[,c("Education","q1k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
+table(mastercopy2[,c("Education","q1k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
+table(mastercopy2[,c("Income","q1k")])
+
+#Percentage for income vs q1k
+table(mastercopy2[,c("Income","q1k")])[1,]/sum(table(mastercopy2[,c("Income","q1k")])[1,])*100
+table(mastercopy2[,c("Income","q1k")])[2,]/sum(table(mastercopy2[,c("Income","q1k")])[2,])*100
+table(mastercopy2[,c("Income","q1k")])[3,]/sum(table(mastercopy2[,c("Income","q1k")])[3,])*100
 
