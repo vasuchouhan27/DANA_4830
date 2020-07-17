@@ -353,41 +353,17 @@ fviz_eig(res.pca7)
 #Loading Score
 fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
-library(factoextra)
+#DA
+#try1
+library(MASS)
+da1 <- qda(Q14C~Gender+Age+Education+Occupation+Income,data=mastercopy2)
+da1
 
-
-
-
-#TRY FOR FA
-
-#Factor Analysis on first part
-library(psych)
-decidefactor <- fa.parallel(mastercopy2[1:5],fm ='ml', fa = 'fa') 
-
-#Kaiser criteria ## check factor loadings 0.7 or greater 
-sum(decidefactor$fa.values >1) #old
-sum(decidefactor$fa.values >0.7) #new
-
-fa1 <- factanal(mastercopy2[1:5], factors = 1, rotation = "promax")
-fa1
-print(fa1,cutoff=0.3,sort=TRUE)
-
-# A. KNOWLEGDE
-decidefactor <- fa.parallel(mastercopy2[6:19],fm ='ml', fa = 'fa') 
-
-#Kaiser criteria ## check factor loadings 0.7 or greater 
-sum(decidefactor$fa.values >1) #old
-sum(decidefactor$fa.values >0.7) #new
-fa2 <- factanal(mastercopy2[6:19], factors = 1, rotation = "promax")
-fa2
-print(fa1,cutoff=0.3,sort=TRUE)
-
-# B. ATTITUDE AND PERCEPTION
-decidefactor <- fa.parallel(mastercopy2[20:26],fm ='ml', fa = 'fa') 
-
-#Kaiser criteria ## check factor loadings 0.7 or greater 
-sum(decidefactor$fa.values >1) #old
-sum(decidefactor$fa.values >0.7) #new
-
+#LDA preduction
+lda.testing <- predict(da1)
+#confusion matrix
+accuracy <- table(lda.testing$class,mastercopy2$Q14C)
+accuracy
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
 
