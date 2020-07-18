@@ -183,6 +183,12 @@ write.csv(mastercopy2,"final.csv", row.names = FALSE)
 #or priorities for the first person.
 names(mastercopy2[1:5])
 
+# Description of variables 
+
+library(Hmisc)
+describe(mastercopy2)
+
+
 
 #PCA
 res.pca0 <- prcomp(mastercopy2[1:5],scale= TRUE)  
@@ -511,8 +517,12 @@ table(mastercopy2[,c("Education","q1k")])[2,]/sum(table(mastercopy2[,c("Educatio
 table(mastercopy2[,c("Education","q1k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
 table(mastercopy2[,c("Income","q1k")])
 
-#Percentage for income vs q1k
+#Percentage for Income vs q1k
 table(mastercopy2[,c("Income","q1k")])[1,]/sum(table(mastercopy2[,c("Income","q1k")])[1,])*100
 table(mastercopy2[,c("Income","q1k")])[2,]/sum(table(mastercopy2[,c("Income","q1k")])[2,])*100
 table(mastercopy2[,c("Income","q1k")])[3,]/sum(table(mastercopy2[,c("Income","q1k")])[3,])*100
 
+#Percentage for Education vs q3k
+table(mastercopy2[,c("Education","q3k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
+table(mastercopy2[,c("Education","q3k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
+table(mastercopy2[,c("Education","q3k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
