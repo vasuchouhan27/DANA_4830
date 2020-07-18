@@ -647,10 +647,41 @@ df_cor = findCorrelation(cor(Data_only_Q), cutoff=0.30)
 hc= sort(df_cor)
 data = Data_only_Q[, c(hc)]
 
-factana <- fa(data,nfactors = 12)
+factana <- fa(data,nfactors = 8)
 fa.diagram(factana)
 
 
-colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+`colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
                                  "Health Concern [Att.]", "Social Conditional Intention",
                                  "Impediments","Environemental Concern [Att.]")
+
