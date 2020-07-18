@@ -523,6 +523,23 @@ table(mastercopy2[,c("Income","q1k")])[2,]/sum(table(mastercopy2[,c("Income","q1
 table(mastercopy2[,c("Income","q1k")])[3,]/sum(table(mastercopy2[,c("Income","q1k")])[3,])*100
 
 #Percentage for Education vs q3k
-table(mastercopy2[,c("Education","q3k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
-table(mastercopy2[,c("Education","q3k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
-table(mastercopy2[,c("Education","q3k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
+table(mastercopy2[,c("Education","q3k")])[1,]/sum(table(mastercopy2[,c("Education","q3k")])[1,])*100
+table(mastercopy2[,c("Education","q3k")])[2,]/sum(table(mastercopy2[,c("Education","q3k")])[2,])*100
+table(mastercopy2[,c("Education","q3k")])[3,]/sum(table(mastercopy2[,c("Education","q3k")])[3,])*100
+
+#Percentage for Income vs q1k
+table(mastercopy2[,c("Income","q3k")])[1,]/sum(table(mastercopy2[,c("Income","q3k")])[1,])*100
+table(mastercopy2[,c("Income","q3k")])[2,]/sum(table(mastercopy2[,c("Income","q3k")])[2,])*100
+table(mastercopy2[,c("Income","q3k")])[3,]/sum(table(mastercopy2[,c("Income","q3k")])[3,])*100
+
+#Percentage for Education vs q3k
+table(mastercopy2[,c("Education","Q8K")])[1,]/sum(table(mastercopy2[,c("Education","Q8K")])[1,])*100
+table(mastercopy2[,c("Education","Q8K")])[2,]/sum(table(mastercopy2[,c("Education","Q8K")])[2,])*100
+table(mastercopy2[,c("Education","Q8K")])[3,]/sum(table(mastercopy2[,c("Education","Q8K")])[3,])*100
+
+#Percentage for Income vs Q8K
+table(mastercopy2[,c("Income","Q8K")])[1,]/sum(table(mastercopy2[,c("Income","Q8K")])[1,])*100
+table(mastercopy2[,c("Income","Q8K")])[2,]/sum(table(mastercopy2[,c("Income","Q8K")])[2,])*100
+table(mastercopy2[,c("Income","Q8K")])[3,]/sum(table(mastercopy2[,c("Income","Q8K")])[3,])*100
+
+vismiss(mastercopy2)
