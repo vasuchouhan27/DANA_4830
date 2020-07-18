@@ -492,6 +492,7 @@ fviz_eig(res.pca1)
 #Loading score
 fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 #MOST variation is among Q1, Q8 and Q3
+#There is strong corelation in Q3 and Q8
 
 #Running DA
 Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K+Q8K,data=mastercopy2)
@@ -504,7 +505,10 @@ accuracy <- table(lda.testing$class,mastercopy2$Gender)
 accuracy
 sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
-##
+#Percentage for gender vs q1k
+table(mastercopy2[,c("Gender","q1k")])[1,]/sum(table(mastercopy2[,c("Gender","q1k")])[1,])*100
+table(mastercopy2[,c("Gender","q1k")])[2,]/sum(table(mastercopy2[,c("Gender","q1k")])[2,])*100
+
 #Percentage for Education vs q1k
 table(mastercopy2[,c("Education","q1k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
 table(mastercopy2[,c("Education","q1k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
@@ -516,3 +520,21 @@ table(mastercopy2[,c("Income","q1k")])[1,]/sum(table(mastercopy2[,c("Income","q1
 table(mastercopy2[,c("Income","q1k")])[2,]/sum(table(mastercopy2[,c("Income","q1k")])[2,])*100
 table(mastercopy2[,c("Income","q1k")])[3,]/sum(table(mastercopy2[,c("Income","q1k")])[3,])*100
 
+
+#Running PCA
+names(mastercopy2[20:26])
+res.pca2 <- prcomp(mastercopy2[20:26])  
+res.pca2
+summary(res.pca2)
+
+library("factoextra")
+eig.val2 <- get_eigenvalue(res.pca2)
+eig.val2
+dimT2 <- c(1:7)
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+#StreePlot
+fviz_eig(res.pca2)
+#Loading score
+fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+#
