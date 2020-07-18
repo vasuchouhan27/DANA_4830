@@ -183,12 +183,6 @@ write.csv(mastercopy2,"final.csv", row.names = FALSE)
 #or priorities for the first person.
 names(mastercopy2[1:5])
 
-# Description of variables 
-
-library(Hmisc)
-describe(mastercopy2)
-
-
 
 #PCA
 res.pca0 <- prcomp(mastercopy2[1:5],scale= TRUE)  
@@ -498,6 +492,21 @@ fviz_eig(res.pca1)
 #Loading score
 fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 #MOST variation is among Q1, Q8 and Q3
+#There is strong corelation in Q3 and Q8
+# A. KNOWLEGDE and age
+res.pca1 <- prcomp(mastercopy2[,c("Occupation","q1k","q2k","q3k","q4k","Q5K1","Q5K2","Q5K3","Q5K4","Q5K5","Q6K","Q7K","Q8K","Q9K")])  
+res.pca1
+summary(res.pca1)
+library("factoextra")
+eig.val1 <- get_eigenvalue(res.pca1)
+eig.val1
+dimT1 <- c(1:14)
+#Plot the cumulative percentage variance accounted for versus the index of the Components 0
+plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+#StreePlot
+fviz_eig(res.pca1)
+#Loading score
+fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
 #Running DA
 Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K+Q8K,data=mastercopy2)
@@ -510,36 +519,107 @@ accuracy <- table(lda.testing$class,mastercopy2$Gender)
 accuracy
 sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
-##
+#Percentage for gender vs q1k
+table(mastercopy2[,c("Gender","q1k")])[1,]/sum(table(mastercopy2[,c("Gender","q1k")])[1,])*100
+table(mastercopy2[,c("Gender","q1k")])[2,]/sum(table(mastercopy2[,c("Gender","q1k")])[2,])*100
+
 #Percentage for Education vs q1k
 table(mastercopy2[,c("Education","q1k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
 table(mastercopy2[,c("Education","q1k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
 table(mastercopy2[,c("Education","q1k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
 table(mastercopy2[,c("Income","q1k")])
 
-#Percentage for Income vs q1k
+#Percentage for income vs q1k
 table(mastercopy2[,c("Income","q1k")])[1,]/sum(table(mastercopy2[,c("Income","q1k")])[1,])*100
 table(mastercopy2[,c("Income","q1k")])[2,]/sum(table(mastercopy2[,c("Income","q1k")])[2,])*100
 table(mastercopy2[,c("Income","q1k")])[3,]/sum(table(mastercopy2[,c("Income","q1k")])[3,])*100
 
-#Percentage for Education vs q3k
-table(mastercopy2[,c("Education","q3k")])[1,]/sum(table(mastercopy2[,c("Education","q3k")])[1,])*100
-table(mastercopy2[,c("Education","q3k")])[2,]/sum(table(mastercopy2[,c("Education","q3k")])[2,])*100
-table(mastercopy2[,c("Education","q3k")])[3,]/sum(table(mastercopy2[,c("Education","q3k")])[3,])*100
 
-#Percentage for Income vs q1k
-table(mastercopy2[,c("Income","q3k")])[1,]/sum(table(mastercopy2[,c("Income","q3k")])[1,])*100
-table(mastercopy2[,c("Income","q3k")])[2,]/sum(table(mastercopy2[,c("Income","q3k")])[2,])*100
-table(mastercopy2[,c("Income","q3k")])[3,]/sum(table(mastercopy2[,c("Income","q3k")])[3,])*100
+#Running PCA on Attitude and preceptions
+names(mastercopy2[,c("Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])
+res.pca2 <- prcomp(mastercopy2[,c("Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])  
+res.pca2
+summary(res.pca2)
+library("factoextra")
+eig.val2 <- get_eigenvalue(res.pca2)
+eig.val2
+dimT2 <- c(1:8)
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+#StreePlot
+fviz_eig(res.pca2)
+#Loading score
+fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+#there is strong corelation between C1 and C2
+#there is strong corelation between C3 and C4
+#there is strong corelation between C5 and C6 and C7
 
-#Percentage for Education vs q3k
-table(mastercopy2[,c("Education","Q8K")])[1,]/sum(table(mastercopy2[,c("Education","Q8K")])[1,])*100
-table(mastercopy2[,c("Education","Q8K")])[2,]/sum(table(mastercopy2[,c("Education","Q8K")])[2,])*100
-table(mastercopy2[,c("Education","Q8K")])[3,]/sum(table(mastercopy2[,c("Education","Q8K")])[3,])*100
 
-#Percentage for Income vs Q8K
-table(mastercopy2[,c("Income","Q8K")])[1,]/sum(table(mastercopy2[,c("Income","Q8K")])[1,])*100
-table(mastercopy2[,c("Income","Q8K")])[2,]/sum(table(mastercopy2[,c("Income","Q8K")])[2,])*100
-table(mastercopy2[,c("Income","Q8K")])[3,]/sum(table(mastercopy2[,c("Income","Q8K")])[3,])*100
+#Percentage for gender vs Q10C4
+table(mastercopy2[,c("Gender","Q10C4")])[1,]/sum(table(mastercopy2[,c("Gender","Q10C4")])[1,])*100
+table(mastercopy2[,c("Gender","Q10C4")])[2,]/sum(table(mastercopy2[,c("Gender","Q10C4")])[2,])*100
 
-vismiss(mastercopy2)
+#Percentage for Education vs Q10C4
+table(mastercopy2[,c("Education","Q10C4")])[1,]/sum(table(mastercopy2[,c("Education","Q10C4")])[1,])*100
+table(mastercopy2[,c("Education","Q10C4")])[2,]/sum(table(mastercopy2[,c("Education","Q10C4")])[2,])*100
+table(mastercopy2[,c("Education","Q10C4")])[3,]/sum(table(mastercopy2[,c("Education","Q10C4")])[3,])*100
+table(mastercopy2[,c("Income","q1k")])
+
+#Percentage for income vs q1k
+table(mastercopy2[,c("Income","Q10C4")])[1,]/sum(table(mastercopy2[,c("Income","Q10C4")])[1,])*100
+table(mastercopy2[,c("Income","Q10C4")])[2,]/sum(table(mastercopy2[,c("Income","Q10C4")])[2,])*100
+table(mastercopy2[,c("Income","Q10C4")])[3,]/sum(table(mastercopy2[,c("Income","Q10C4")])[3,])*100
+
+table(mastercopy2$Q10C1)      
+table(mastercopy2$Q10C2)
+
+table(mastercopy2$Q10C3)
+table(mastercopy2$Q10C4)
+table(mastercopy2$Q10C5)
+table(mastercopy2$Q10C6)
+table(mastercopy2$Q10C7)
+
+# Fit the full model 
+full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","Q10C5","Q10C6","Q10C7")])
+# Stepwise regression model
+step.model <- stepAIC(full.model, direction = "both", 
+                      trace = FALSE)
+summary(step.model)
+
+resid(step.model)
+
+#Running PCA on Attitude and preceptions
+names(mastercopy2[,c("Education","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])
+res.pca2 <- prcomp(mastercopy2[,c("Gender","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])  
+res.pca2
+summary(res.pca2)
+library("factoextra")
+eig.val2 <- get_eigenvalue(res.pca2)
+eig.val2
+dimT2 <- c(1:8)
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+#StreePlot
+fviz_eig(res.pca2)
+#Loading score
+fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+
+#C. SOCIAL NORMS AFFECTING PLASTIC CHANGING INTENTION AND BEHAVIORS
+res.pca2 <- prcomp(mastercopy2[,c("Q11C1","Q11C2","Q11C3","Q11C4","Q11C5")])  
+res.pca2
+summary(res.pca2)
+library("factoextra")
+eig.val2 <- get_eigenvalue(res.pca2)
+eig.val2
+dimT2 <- c(1:5)
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+#StreePlot
+fviz_eig(res.pca2)
+#Loading score
+fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+round(cor(mastercopy2[,c("Q11C1","Q11C2","Q11C3","Q11C4","Q11C5")]),2)
+
+cor(mastercopy2$q3k,mastercopy2$Q8K)
