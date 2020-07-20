@@ -623,3 +623,65 @@ fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00A
 round(cor(mastercopy2[,c("Q11C1","Q11C2","Q11C3","Q11C4","Q11C5")]),2)
 
 cor(mastercopy2$q3k,mastercopy2$Q8K)
+
+
+##Factor Analysis
+
+NewDATA<- mastercopy2[,-(1:5)]
+Data_only_Q <- NewDATA[,-(56:61)]
+
+fact_An <- factanal(Data_only_Q, factors = 20)
+fact_An
+library(psych)
+fa.diagram(fact_An$loadings)
+
+install.packages("GPArotation")
+library(GPArotation)
+factana <- fa(Data_only_Q,nfactors = 12)
+fa.diagram(factana)
+
+#keeping only correlated variables
+install.packages("caret")
+library('caret')
+df_cor = findCorrelation(cor(Data_only_Q), cutoff=0.30)
+hc= sort(df_cor)
+data = Data_only_Q[, c(hc)]
+
+factana <- fa(data,nfactors = 8)
+fa.diagram(factana)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+`colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
+                                 "Health Concern [Att.]", "Social Conditional Intention",
+                                 "Impediments","Environemental Concern [Att.]")
+
