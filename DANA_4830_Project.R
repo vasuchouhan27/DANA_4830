@@ -2,6 +2,9 @@
 
 #Import the data and make copy of data
 master <- read.csv("Data-screening-1 (1).csv")
+
+
+
 mastercopy <- master
 
 #Checking names of columns and remove all those column which are not in appendix or not relative to study.
@@ -397,8 +400,7 @@ fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00A
 # Fit the full model 
 full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
 #Stepwise regression
-step.model <- stepAIC(full.model, direction = "both", 
-                      trace = FALSE)
+step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
 summary(step.model)
 
 mastercopy3 <- mastercopy2
@@ -658,30 +660,16 @@ fa.diagram(factana)
 
 
 
+table(mastercopy2$Gender,mastercopy2$q1k)
+
+mastercopy2$Age
+
+chisq.test(table(mastercopy2$Gender,mastercopy2$q1k),correct = FALSE)  #p-value = 0.0006377 , Reject NUll it means gender and quetion 1 is dependent on each other. 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-`colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
+colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
                                  "Health Concern [Att.]", "Social Conditional Intention",
                                  "Impediments","Environemental Concern [Att.]")
+
+
 
