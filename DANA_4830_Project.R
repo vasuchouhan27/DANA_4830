@@ -2,6 +2,9 @@
 
 #Import the data and make copy of data
 master <- read.csv("Data-screening-1 (1).csv")
+
+
+
 mastercopy <- master
 
 #Checking names of columns and remove all those column which are not in appendix or not relative to study.
@@ -397,8 +400,7 @@ fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00A
 # Fit the full model 
 full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
 #Stepwise regression
-step.model <- stepAIC(full.model, direction = "both", 
-                      trace = FALSE)
+step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
 summary(step.model)
 
 mastercopy3 <- mastercopy2
@@ -710,6 +712,7 @@ fact_ana
 factana <- fa(data_only_corelated_try3,nfactors =8)
 fa.diagram(factana)
 
+<<<<<<< HEAD
 colnames(factana$loadings) <- c("Recycle Behavior Intention","Management Responsibility",
                                "Plastic usage alternative behavior and knowledge",
                                "Social Norms affecting behviour & Intention",
@@ -718,3 +721,113 @@ colnames(factana$loadings) <- c("Recycle Behavior Intention","Management Respons
                                "Concern about environment",
                                "Perceived Behavior Control",
                                "Knowledge about sources")
+
+# Chi Square Analysis
+
+#CHiOne fo  gender
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q18I1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q18I2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q18I3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q15C4),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q15C3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q15C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P4),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P5),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C4),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C5),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q5K4),correct = FALSE) 
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q5K5),correct = FALSE) 
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q5K1),correct = FALSE) 
+
+#Chi Square with Education
+chisq.test(table(mastercopy2$Education,mastercopy2$Q18I1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q18I2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q18I3),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q15C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q15C3),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q15C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P4),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P3),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P5),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C5),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q5K4),correct = FALSE)  
+chisq.test(table(mastercopy2$Education,mastercopy2$Q5K5),correct = FALSE)  
+chisq.test(table(mastercopy2$Education,mastercopy2$Q5K1),correct = FALSE) 
+
+#Chi Square with occupation
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q18I1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q18I2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q18I3),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q15C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q15C3),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q15C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P4),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P3),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P5),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C5),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q5K4),correct = FALSE)  
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q5K5),correct = FALSE)  
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q5K1),correct = FALSE) 
+
+#Chi Square with Income
+chisq.test(table(mastercopy2$Income,mastercopy2$Q18I1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q18I2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q18I3),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q15C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q15C3),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q15C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P4),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P3),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P5),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C5),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q5K4),correct = FALSE)  
+chisq.test(table(mastercopy2$Income,mastercopy2$Q5K5),correct = FALSE)  
+chisq.test(table(mastercopy2$Income,mastercopy2$Q5K1),correct = FALSE) 
