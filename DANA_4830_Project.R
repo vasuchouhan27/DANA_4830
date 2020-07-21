@@ -627,61 +627,94 @@ cor(mastercopy2$q3k,mastercopy2$Q8K)
 
 ##Factor Analysis
 
-NewDATA<- mastercopy2[,-(1:5)]
-Data_only_Q <- NewDATA[,-(56:61)]
+#Data without question 19
+data_without19 <- mastercopy2[,-(61:66)]
+#we delete col 19 as it is not that much important
 
-fact_An <- factanal(Data_only_Q, factors = 20)
-fact_An
+#Now we also dont need demographic as per requirement of project
+data<-data_without19[,-(1:5)]
+
+decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
+#According to parallel analysis we have 11 factors
+
+#As we see by the parallel analysis number of factor should be 11.
+
+#Try 1
+#Third model with 9 factors
+factana <- fa(data_only_corelated_try3,nfactors =11)
+fa.diagram(factana)
+
 library(psych)
-fa.diagram(fact_An$loadings)
+fa.diagram(fact_an_try1$loadings)
 
 install.packages("GPArotation")
 library(GPArotation)
-factana <- fa(Data_only_Q,nfactors = 12)
-fa.diagram(factana)
+factanatry1 <- fa(data,nfactors = 11)
+fa.diagram(factanatry1)
+#As the p value is very low so model is not good.
 
-#keeping only correlated variables
+#keeping only correlated variables keeping cutoff 0.1
 install.packages("caret")
 library('caret')
-df_cor = findCorrelation(cor(Data_only_Q), cutoff=0.30)
-hc= sort(df_cor)
-data = Data_only_Q[, c(hc)]
+data_corelated_try1 = findCorrelation(cor(data), cutoff=0.1)
+data_corelated_try1
+hc= sort(data_corelated_try1)
+data_only_corelated_try1 = data[, c(hc)]
+dim(data_only_corelated_try1)
+#We are left with only 42 variables.
 
-factana <- fa(data,nfactors = 8)
+factana <- fa(data_only_corelated_try1,nfactors = 11)
 fa.diagram(factana)
 
+#keeping only correlated variables keeping cutoff 0.15
+data_corelated_try2 = findCorrelation(cor(data), cutoff=0.2)
+data_corelated_try2
+hc= sort(data_corelated_try2)
+data_only_corelated_try2 = data[, c(hc)]
+dim(data_only_corelated_try2)
+#We are left with only 42 variables.
 
+factana <- fa(data_only_corelated_try2,nfactors = 11)
+fa.diagram(factana)
+#relations are not  good will try with more cutt off
 
+#keeping only correlated variables keeping cutoff 0.2
+data_corelated_try3 = findCorrelation(cor(data), cutoff=0.3)
+data_corelated_try3
+hc= sort(data_corelated_try3)
+data_only_corelated_try3 = data[, c(hc)]
+dim(data_only_corelated_try3)
+#We are left with only 42 variables.
 
+#First model with 11 factors
+fact_ana <- factanal(data_only_corelated_try3, factors = 11)
+fact_ana
+factana <- fa(data_only_corelated_try3,nfactors =11)
+fa.diagram(factana)
 
+#Second model with 10 factors
+fact_ana <- factanal(data_only_corelated_try3, factors = 10)
+fact_ana
+factana <- fa(data_only_corelated_try3,nfactors =10)
+fa.diagram(factana)
 
+#Third model with 9 factors
+fact_ana <- factanal(data_only_corelated_try3, factors = 9)
+fact_ana
+factana <- fa(data_only_corelated_try3,nfactors =9)
+fa.diagram(factana)
 
+#Fourth model with 8 factors
+fact_ana <- factanal(data_only_corelated_try3, factors = 8)
+fact_ana
+factana <- fa(data_only_corelated_try3,nfactors =8)
+fa.diagram(factana)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-`colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
-                                 "Health Concern [Att.]", "Social Conditional Intention",
-                                 "Impediments","Environemental Concern [Att.]")
-
+colnames(factana$loadings) <- c("Recycle Behavior Intention","Management Responsibility",
+                               "Plastic usage alternative behavior and knowledge",
+                               "Social Norms affecting behviour & Intention",
+                               "Strongly discourage Nylon",
+                               "Concern about health",
+                               "Concern about environment",
+                               "Perceived Behavior Control",
+                               "Knowledge about sources")
