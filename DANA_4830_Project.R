@@ -33,7 +33,7 @@ mastercopy$Age[mastercopy$Age=="16 years-old"] <- "16"
 library("stringr")
 mastercopy$Age <-str_replace_all(mastercopy$Age, "[abcdefgfhijklmanopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]", NA_character_)
 mastercopy$Age <-strtoi(mastercopy$Age)
-#It makes no sense if the person age more than 100 or less tha 5 contribute in survey.
+#It makes no sense if the person age more than 100 or less than 5 contribute in survey.
 mastercopy<-mastercopy[!(mastercopy["Age"] <5),]
 mastercopy<-mastercopy[!(mastercopy["Age"] >100),]
 #Income
