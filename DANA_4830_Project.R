@@ -163,6 +163,13 @@ dim(mastercopy1)
   dim(mastercopy1)
   vis_miss(mastercopy1)
 
+  
+# Creating a data set by just removing null values. 
+noMiceDataset <- na.omit(mastercopy1)
+dim(noMiceDataset)
+vis_miss(noMiceDataset)  
+#Finally import the noMiceData  set
+write.csv(noMiceDataset,"final_No_mice.csv", row.names = FALSE)
 #Summary of the data
 summary(mastercopy1)
   
@@ -712,7 +719,7 @@ fact_ana
 factana <- fa(data_only_corelated_try3,nfactors =8)
 fa.diagram(factana)
 
-<<<<<<< HEAD
+HEAD
 colnames(factana$loadings) <- c("Recycle Behavior Intention","Management Responsibility",
                                "Plastic usage alternative behavior and knowledge",
                                "Social Norms affecting behviour & Intention",
