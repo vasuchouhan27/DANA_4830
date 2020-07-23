@@ -542,7 +542,21 @@ fa.diagram(factana1$loadings)
 install.packages("GPArotation")
 library(GPArotation)
 factanatry1 <- fa(data,nfactors = 11)
+library(psych)
 fa.diagram(factanatry1)
+colnames(factanatry1$loadings)
+
+colnames(factanatry1$loadings)=c("PlasBeh",
+                        "ReduInt",
+                        "SysResp",
+                        "SocAffect"
+                        ,"NatrConc",
+                        "HealConc"
+                        ,"CondBeh"
+                        ,"IngEff"
+                        ,"BehChan"
+                        ,"ConEfft",
+                        "Diff")
 #As the p value is very low so model is not good.
 
 #keeping only correlated variables keeping cutoff 0.1
@@ -596,6 +610,8 @@ fact_ana4 <- factanal(data_only_corelated_try3, factors = 9)
 fact_ana4
 factana4 <- fa(data_only_corelated_try3,nfactors =9)
 fa.diagram(factana4)
+colnames(fact_ana4$loadings) =c()
+
 
 #Fourth model with 8 factors
 fact_ana5 <- factanal(data_only_corelated_try3, factors = 8)
