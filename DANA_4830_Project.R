@@ -838,3 +838,5 @@ chisq.test(table(mastercopy2$Income,mastercopy2$Q12C2),correct = FALSE)
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K4),correct = FALSE)  
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K5),correct = FALSE)  
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K1),correct = FALSE) 
+
+
