@@ -3,14 +3,12 @@
 #Import the data and make copy of data
 master <- read.csv("Data-screening-1 (1).csv")
 
-
-
 mastercopy <- master
 
 #Checking names of columns and remove all those column which are not in appendix or not relative to study.
 names(mastercopy)
 dim(mastercopy)
-#dropping unecesscory rows
+#dropping unnecessory rows
 mastercopy <- mastercopy[,-c(1:16)]
 names(mastercopy)
 
@@ -78,7 +76,7 @@ mastercopy <- select(mastercopy, -Q12C8)
 #Now update other column as needed according to appedix.
 
 mastercopy$Q12C1 <- factor(mastercopy$Q12C1, levels = c(1,2,3,4,5,6))
- mastercopy$Q12C2 <- factor(mastercopy$Q12C2, levels = c(1,2,3,4,5,6))
+mastercopy$Q12C2 <- factor(mastercopy$Q12C2, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C3 <- factor(mastercopy$Q12C3, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C4 <- factor(mastercopy$Q12C4, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C5 <- factor(mastercopy$Q12C5, levels = c(1,2,3,4,5,6))
@@ -342,29 +340,6 @@ plot(dimT6, eig.val6$cumulative.variance.percent, ylab = "Commulative Variance",
 fviz_eig(res.pca6)
 #Loading Score
 fviz_pca_var(res.pca6,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-# G Communication related plastics 
-names(mastercopy2[61:66])
-res.pca7 <- prcomp(mastercopy2[61:66],scale= TRUE)  
-summary(res.pca7)
-
-library("factoextra")
-eig.val7 <- get_eigenvalue(res.pca6)
-eig.val7
-
-dimT7 <- c(1:4)
-dimT7
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT7, eig.val7$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(res.pca7)
-#Loading Score
-fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-
-
 ####Influence on gender on knowledge
 
 Gender_Knowledge =mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
@@ -379,40 +354,20 @@ accuracy <- table(lda.testing$class,mastercopy2$Gender)
 accuracy
 sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
-#FA
-Gender_Knowledge_FA <- factanal(mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")], factors = 4, rotation = "promax")
-Gender_Knowledge_FA
-
-mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
-
-#PCA with gender and knowledge
-res.pca1 <- prcomp(mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")],scale= TRUE)  
-summary(res.pca1)
-
-library("factoextra")
-eig.val1 <- get_eigenvalue(res.pca1)
-eig.val1
-
-dimT1 <- c(1:8)
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(res.pca1)
-
-#Loading score
-fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+#Regression Try
 
 # Fit the full model 
 full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
 #Stepwise regression
+library(MASS)
 step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
 summary(step.model)
+#CAnt do regression as it has very low p value.
 
+#Make another data to try logistic regression
 mastercopy3 <- mastercopy2
 mastercopy3$Gender[mastercopy3$Gender==2]=0
-+
+
 #Logistic regression
 Reg_log_Gender_Know<- glm(Gender~ factor(q1k)+factor(q2k)+factor(q3k)+factor(q4k)+factor(Q6K)
                           +factor(Q7K)+factor(Q8K)+factor(Q9K), family=binomial, data=mastercopy3[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
@@ -423,9 +378,9 @@ pchisq(1110.5-1036.7, df = 982-963, lower.tail = FALSE)
 Gender_q1k <- mastercopy2[,c("Gender","q1k")] 
 #CHECKING ANSWR OF GENDER VS Q1k
 unique(Gender_q1k)
-219+224
 
-#Checking answer of gender vs Knowlegdge
+
+#Checking answer of gender vs Knowledge
 table(mastercopy2[,c("Gender","q1k")])
 #Percentage for gender vs q1k
 table(mastercopy2[,c("Gender","q1k")])[1,]/sum(table(mastercopy2[,c("Gender","q1k")])[1,])*100
@@ -479,49 +434,11 @@ table(mastercopy2[,c("Gender","Q8K")])[2,]/sum(table(mastercopy2[,c("Gender","Q8
 table(mastercopy2[,c("Gender","Q9K")])[1,]/sum(table(mastercopy2[,c("Gender","Q9K")])[1,])*100
 table(mastercopy2[,c("Gender","Q9K")])[2,]/sum(table(mastercopy2[,c("Gender","Q9K")])[2,])*100
 
-#Running PCA
-
-# A. KNOWLEGDE
-res.pca1 <- prcomp(mastercopy2[,c("q1k","q2k","q3k","q4k","Q5K1","Q5K2","Q5K3","Q5K4","Q5K5","Q6K","Q7K","Q8K","Q9K")])  
-res.pca1
-summary(res.pca1)
-
-library("factoextra")
-eig.val1 <- get_eigenvalue(res.pca1)
-eig.val1
-
-dimT1 <- c(1:13)
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(res.pca1)
-
-#Loading score
-fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-#MOST variation is among Q1, Q8 and Q3
-#There is strong corelation in Q3 and Q8
-# A. KNOWLEGDE and age
-res.pca1 <- prcomp(mastercopy2[,c("Occupation","q1k","q2k","q3k","q4k","Q5K1","Q5K2","Q5K3","Q5K4","Q5K5","Q6K","Q7K","Q8K","Q9K")])  
-res.pca1
-summary(res.pca1)
-library("factoextra")
-eig.val1 <- get_eigenvalue(res.pca1)
-eig.val1
-dimT1 <- c(1:14)
-#Plot the cumulative percentage variance accounted for versus the index of the Components 0
-plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-#StreePlot
-fviz_eig(res.pca1)
-#Loading score
-fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
 #Running DA
-Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K+Q8K,data=mastercopy2)
+Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K,data=mastercopy2)
 Gender_Knowledge_DA
 
-#LDA preduction
+#LDA prediction
 lda.testing <- predict(Gender_Knowledge_DA)
 #confusion matrix
 accuracy <- table(lda.testing$class,mastercopy2$Gender)
@@ -595,44 +512,8 @@ step.model <- stepAIC(full.model, direction = "both",
                       trace = FALSE)
 summary(step.model)
 
-resid(step.model)
-
-#Running PCA on Attitude and preceptions
-names(mastercopy2[,c("Education","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])
-res.pca2 <- prcomp(mastercopy2[,c("Gender","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])  
-res.pca2
-summary(res.pca2)
-library("factoextra")
-eig.val2 <- get_eigenvalue(res.pca2)
-eig.val2
-dimT2 <- c(1:8)
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-#StreePlot
-fviz_eig(res.pca2)
-#Loading score
-fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-
-#C. SOCIAL NORMS AFFECTING PLASTIC CHANGING INTENTION AND BEHAVIORS
-res.pca2 <- prcomp(mastercopy2[,c("Q11C1","Q11C2","Q11C3","Q11C4","Q11C5")])  
-res.pca2
-summary(res.pca2)
-library("factoextra")
-eig.val2 <- get_eigenvalue(res.pca2)
-eig.val2
-dimT2 <- c(1:5)
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-#StreePlot
-fviz_eig(res.pca2)
-#Loading score
-fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-round(cor(mastercopy2[,c("Q11C1","Q11C2","Q11C3","Q11C4","Q11C5")]),2)
-
-cor(mastercopy2$q3k,mastercopy2$Q8K)
-
+#As per knowledge and reserach Q19 and demographic donot contribute much so we remove those from columns
+#Try Factor Analysis
 
 ##Factor Analysis
 
@@ -643,18 +524,20 @@ data_without19 <- mastercopy2[,-(61:66)]
 #Now we also dont need demographic as per requirement of project
 data<-data_without19[,-(1:5)]
 
+#DEcide number of initial factors
+library(psych)
 decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
 #According to parallel analysis we have 11 factors
 
 #As we see by the parallel analysis number of factor should be 11.
 
 #Try 1
-#Third model with 9 factors
-factana <- fa(data_only_corelated_try3,nfactors =11)
-fa.diagram(factana)
+
+factana1 <- fa(data,nfactors =11)
+fa.diagram(factana1)
 
 library(psych)
-fa.diagram(fact_an_try1$loadings)
+fa.diagram(factana1$loadings)
 
 install.packages("GPArotation")
 library(GPArotation)
@@ -674,60 +557,61 @@ dim(data_only_corelated_try1)
 
 factana <- fa(data_only_corelated_try1,nfactors = 11)
 fa.diagram(factana)
+#Model Donot improve much So we need to increase the cutoff
 
-#keeping only correlated variables keeping cutoff 0.15
+#keeping only correlated variables keeping cutoff 0.2
 data_corelated_try2 = findCorrelation(cor(data), cutoff=0.2)
 data_corelated_try2
 hc= sort(data_corelated_try2)
 data_only_corelated_try2 = data[, c(hc)]
 dim(data_only_corelated_try2)
-#We are left with only 42 variables.
+#We are left with only 31 variables.
 
 factana <- fa(data_only_corelated_try2,nfactors = 11)
 fa.diagram(factana)
-#relations are not  good will try with more cutt off
+#Model Improves but we will try with cut off 0.3
 
-#keeping only correlated variables keeping cutoff 0.2
+#keeping only correlated variables keeping cutoff 0.3
 data_corelated_try3 = findCorrelation(cor(data), cutoff=0.3)
 data_corelated_try3
 hc= sort(data_corelated_try3)
 data_only_corelated_try3 = data[, c(hc)]
 dim(data_only_corelated_try3)
-#We are left with only 42 variables.
+#We are left with only 29 variables.
 
 #First model with 11 factors
-fact_ana <- factanal(data_only_corelated_try3, factors = 11)
-fact_ana
-factana <- fa(data_only_corelated_try3,nfactors =11)
-fa.diagram(factana)
+fact_ana2 <- factanal(data_only_corelated_try3, factors = 11)
+fact_ana2
+factana2 <- fa(data_only_corelated_try3,nfactors =11)
+fa.diagram(factana2)
 
 #Second model with 10 factors
-fact_ana <- factanal(data_only_corelated_try3, factors = 10)
-fact_ana
-factana <- fa(data_only_corelated_try3,nfactors =10)
-fa.diagram(factana)
+fact_ana3 <- factanal(data_only_corelated_try3, factors = 10)
+fact_ana3
+factana3 <- fa(data_only_corelated_try3,nfactors =10)
+fa.diagram(factana3)
 
 #Third model with 9 factors
-fact_ana <- factanal(data_only_corelated_try3, factors = 9)
-fact_ana
-factana <- fa(data_only_corelated_try3,nfactors =9)
-fa.diagram(factana)
+fact_ana4 <- factanal(data_only_corelated_try3, factors = 9)
+fact_ana4
+factana4 <- fa(data_only_corelated_try3,nfactors =9)
+fa.diagram(factana4)
 
 #Fourth model with 8 factors
-fact_ana <- factanal(data_only_corelated_try3, factors = 8)
-fact_ana
-factana <- fa(data_only_corelated_try3,nfactors =8)
-fa.diagram(factana)
+fact_ana5 <- factanal(data_only_corelated_try3, factors = 8)
+fact_ana5
+factana5 <- fa(data_only_corelated_try3,nfactors =8)
+fa.diagram(factana5)
 
-HEAD
-colnames(factana$loadings) <- c("Recycle Behavior Intention","Management Responsibility",
-                               "Plastic usage alternative behavior and knowledge",
-                               "Social Norms affecting behviour & Intention",
-                               "Strongly discourage Nylon",
-                               "Concern about health",
-                               "Concern about environment",
-                               "Perceived Behavior Control",
-                               "Knowledge about sources")
+
+colnames(factana4$loadings) <- c("RecBeh","ManRes",
+                               "behKnow",
+                               "SocAff",
+                               "DiscNylon",
+                               "Conhea",
+                               "Conenv",
+                               "PerBeh",
+                               "KnowSou")
 
 # Chi Square Analysis
 
@@ -838,5 +722,4 @@ chisq.test(table(mastercopy2$Income,mastercopy2$Q12C2),correct = FALSE)
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K4),correct = FALSE)  
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K5),correct = FALSE)  
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K1),correct = FALSE) 
-
 
