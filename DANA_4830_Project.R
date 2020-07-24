@@ -162,7 +162,8 @@ dim(mastercopy1)
   vis_miss(mastercopy1)
 
   
-# Creating a data set by just removing null values. 
+
+  # Creating a data set by just removing null values. 
 noMiceDataset <- na.omit(mastercopy1)
 dim(noMiceDataset)
 vis_miss(noMiceDataset)  
@@ -171,6 +172,18 @@ write.csv(noMiceDataset,"final_No_mice.csv", row.names = FALSE)
 #Summary of the data
 summary(mastercopy1)
   
+
+#Q19 descriptive analysis
+View(mastercopy1)
+table(mastercopy1$Q19C1)
+table(mastercopy1$Q19C2)
+table(mastercopy1$Q19C3)
+table(mastercopy1$Q19C4)
+table(mastercopy1$Q19c5)
+table(mastercopy1$Q19c6)
+
+
+
 #Applying Mice to fill null values
 install.packages("mice")
 library(mice)
@@ -434,6 +447,11 @@ table(mastercopy2[,c("Gender","Q8K")])[2,]/sum(table(mastercopy2[,c("Gender","Q8
 table(mastercopy2[,c("Gender","Q9K")])[1,]/sum(table(mastercopy2[,c("Gender","Q9K")])[1,])*100
 table(mastercopy2[,c("Gender","Q9K")])[2,]/sum(table(mastercopy2[,c("Gender","Q9K")])[2,])*100
 
+
+table(mastercopy2[,c("Gender","Q10C1")])[1,]/sum(table(mastercopy2[,c("Gender","Q7K")])[1,])*100
+table(mastercopy2[,c("Gender","Q10C1")])[2,]/sum(table(mastercopy2[,c("Gender","Q7K")])[2,])*100
+
+
 #Running DA
 Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K,data=mastercopy2)
 Gender_Knowledge_DA
@@ -504,6 +522,9 @@ table(mastercopy2$Q10C4)
 table(mastercopy2$Q10C5)
 table(mastercopy2$Q10C6)
 table(mastercopy2$Q10C7)
+
+table(mastercopy2$Q10C7)
+
 
 # Fit the full model 
 full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","Q10C5","Q10C6","Q10C7")])
@@ -591,7 +612,7 @@ data_corelated_try3
 hc= sort(data_corelated_try3)
 data_only_corelated_try3 = data[, c(hc)]
 dim(data_only_corelated_try3)
-#We are left with only 29 variables.
+#We are left with only 16 variables.
 
 #First model with 11 factors
 fact_ana2 <- factanal(data_only_corelated_try3, factors = 11)
@@ -620,7 +641,8 @@ factana5 <- fa(data_only_corelated_try3,nfactors =8)
 fa.diagram(factana5)
 
 
-colnames(factana4$loadings) <- c("RecBeh","ManRes",
+colnames(factana4$loadings) <- c("RecBeh",
+                                 "ManRes",
                                "behKnow",
                                "SocAff",
                                "DiscNylon",
@@ -793,6 +815,17 @@ dim(data_corelatedNoMice)
 factana9 <- fa(data_corelatedNoMice,nfactors = 11)
 fa.diagram(factana9)
 
+colnames(factana9$loadings) <- c("reduInt",
+                                  "MngRspb",
+                                  "RefNyln",
+                                  "SocAfct",
+                                  "Atitud",
+                                  "natConc",
+                                  "ruleAbid",
+                                  "PercBeh",
+                                  "AvoidInt",
+                                 "source",
+                                 "Environmentlist")
 
 # Trying with 10 factors
 factanal10 <- factanal(data_corelatedNoMice, factors = 10)
@@ -824,3 +857,85 @@ colnames(factana11$loadings) <- c("RecBeh",
                                   "Knldge")
 
 fa.diagram(factana11)
+
+
+
+
+#############################################################################################################################
+View(data_only_corelated_try3)
+data_only_corelated_try3
+#Corelation Short method
+cordata <-cor(data_only_corelated_try3)
+library(corrplot)
+corrplot(cordata, method="number")
+#Corelation
+cormat <- round(cor(data_only_corelated_try3),2)
+head(cormat)
+install.packages("reshape2")
+library(reshape2)
+melted_cormat <- melt(cormat)
+head(melted_cormat)
+library(ggplot2)
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
+  geom_tile()
+# Get lower triangle of the correlation matrix
+get_lower_tri<-function(cormat){
+  cormat[upper.tri(cormat)] <- NA
+  return(cormat)
+}
+# Get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)
+}
+# Melt the correlation matrix
+library(reshape2)
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Heatmap
+library(ggplot2)
+ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                   size = 12, hjust = 1))+
+  coord_fixed()
+reorder_cormat <- function(cormat){
+  # Use correlation between variables as distance
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Create a ggheatmap
+ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal()+ # minimal theme
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                   size = 12, hjust = 1))+
+  coord_fixed()
+# Print the heatmap
+print(ggheatmap)
+ggheatmap +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.justification = c(1, 0),
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+                               title.position = "top", title.hjust = 0.5))
+
