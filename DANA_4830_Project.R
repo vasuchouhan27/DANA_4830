@@ -3,14 +3,12 @@
 #Import the data and make copy of data
 master <- read.csv("Data-screening-1 (1).csv")
 
-
-
 mastercopy <- master
 
 #Checking names of columns and remove all those column which are not in appendix or not relative to study.
 names(mastercopy)
 dim(mastercopy)
-#dropping unecesscory rows
+#dropping unnecessory rows
 mastercopy <- mastercopy[,-c(1:16)]
 names(mastercopy)
 
@@ -78,7 +76,7 @@ mastercopy <- select(mastercopy, -Q12C8)
 #Now update other column as needed according to appedix.
 
 mastercopy$Q12C1 <- factor(mastercopy$Q12C1, levels = c(1,2,3,4,5,6))
- mastercopy$Q12C2 <- factor(mastercopy$Q12C2, levels = c(1,2,3,4,5,6))
+mastercopy$Q12C2 <- factor(mastercopy$Q12C2, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C3 <- factor(mastercopy$Q12C3, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C4 <- factor(mastercopy$Q12C4, levels = c(1,2,3,4,5,6))
 mastercopy$Q12C5 <- factor(mastercopy$Q12C5, levels = c(1,2,3,4,5,6))
@@ -163,9 +161,29 @@ dim(mastercopy1)
   dim(mastercopy1)
   vis_miss(mastercopy1)
 
+  
+
+  # Creating a data set by just removing null values. 
+noMiceDataset <- na.omit(mastercopy1)
+dim(noMiceDataset)
+vis_miss(noMiceDataset)  
+#Finally import the noMiceData  set
+write.csv(noMiceDataset,"final_No_mice.csv", row.names = FALSE)
 #Summary of the data
 summary(mastercopy1)
   
+
+#Q19 descriptive analysis
+View(mastercopy1)
+table(mastercopy1$Q19C1)
+table(mastercopy1$Q19C2)
+table(mastercopy1$Q19C3)
+table(mastercopy1$Q19C4)
+table(mastercopy1$Q19c5)
+table(mastercopy1$Q19c6)
+
+
+
 #Applying Mice to fill null values
 install.packages("mice")
 library(mice)
@@ -335,29 +353,6 @@ plot(dimT6, eig.val6$cumulative.variance.percent, ylab = "Commulative Variance",
 fviz_eig(res.pca6)
 #Loading Score
 fviz_pca_var(res.pca6,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-# G Communication related plastics 
-names(mastercopy2[61:66])
-res.pca7 <- prcomp(mastercopy2[61:66],scale= TRUE)  
-summary(res.pca7)
-
-library("factoextra")
-eig.val7 <- get_eigenvalue(res.pca6)
-eig.val7
-
-dimT7 <- c(1:4)
-dimT7
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT7, eig.val7$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(res.pca7)
-#Loading Score
-fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-
-
 ####Influence on gender on knowledge
 
 Gender_Knowledge =mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
@@ -372,40 +367,20 @@ accuracy <- table(lda.testing$class,mastercopy2$Gender)
 accuracy
 sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
-#FA
-Gender_Knowledge_FA <- factanal(mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")], factors = 4, rotation = "promax")
-Gender_Knowledge_FA
-
-mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
-
-#PCA with gender and knowledge
-res.pca1 <- prcomp(mastercopy2[,c("q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")],scale= TRUE)  
-summary(res.pca1)
-
-library("factoextra")
-eig.val1 <- get_eigenvalue(res.pca1)
-eig.val1
-
-dimT1 <- c(1:8)
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(res.pca1)
-
-#Loading score
-fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+#Regression Try
 
 # Fit the full model 
 full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
 #Stepwise regression
+library(MASS)
 step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
 summary(step.model)
+#CAnt do regression as it has very low p value.
 
+#Make another data to try logistic regression
 mastercopy3 <- mastercopy2
 mastercopy3$Gender[mastercopy3$Gender==2]=0
-+
+
 #Logistic regression
 Reg_log_Gender_Know<- glm(Gender~ factor(q1k)+factor(q2k)+factor(q3k)+factor(q4k)+factor(Q6K)
                           +factor(Q7K)+factor(Q8K)+factor(Q9K), family=binomial, data=mastercopy3[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
@@ -416,9 +391,9 @@ pchisq(1110.5-1036.7, df = 982-963, lower.tail = FALSE)
 Gender_q1k <- mastercopy2[,c("Gender","q1k")] 
 #CHECKING ANSWR OF GENDER VS Q1k
 unique(Gender_q1k)
-219+224
 
-#Checking answer of gender vs Knowlegdge
+
+#Checking answer of gender vs Knowledge
 table(mastercopy2[,c("Gender","q1k")])
 #Percentage for gender vs q1k
 table(mastercopy2[,c("Gender","q1k")])[1,]/sum(table(mastercopy2[,c("Gender","q1k")])[1,])*100
@@ -472,49 +447,16 @@ table(mastercopy2[,c("Gender","Q8K")])[2,]/sum(table(mastercopy2[,c("Gender","Q8
 table(mastercopy2[,c("Gender","Q9K")])[1,]/sum(table(mastercopy2[,c("Gender","Q9K")])[1,])*100
 table(mastercopy2[,c("Gender","Q9K")])[2,]/sum(table(mastercopy2[,c("Gender","Q9K")])[2,])*100
 
-#Running PCA
 
-# A. KNOWLEGDE
-res.pca1 <- prcomp(mastercopy2[,c("q1k","q2k","q3k","q4k","Q5K1","Q5K2","Q5K3","Q5K4","Q5K5","Q6K","Q7K","Q8K","Q9K")])  
-res.pca1
-summary(res.pca1)
+table(mastercopy2[,c("Gender","Q10C1")])[1,]/sum(table(mastercopy2[,c("Gender","Q7K")])[1,])*100
+table(mastercopy2[,c("Gender","Q10C1")])[2,]/sum(table(mastercopy2[,c("Gender","Q7K")])[2,])*100
 
-library("factoextra")
-eig.val1 <- get_eigenvalue(res.pca1)
-eig.val1
-
-dimT1 <- c(1:13)
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(res.pca1)
-
-#Loading score
-fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-#MOST variation is among Q1, Q8 and Q3
-#There is strong corelation in Q3 and Q8
-# A. KNOWLEGDE and age
-res.pca1 <- prcomp(mastercopy2[,c("Occupation","q1k","q2k","q3k","q4k","Q5K1","Q5K2","Q5K3","Q5K4","Q5K5","Q6K","Q7K","Q8K","Q9K")])  
-res.pca1
-summary(res.pca1)
-library("factoextra")
-eig.val1 <- get_eigenvalue(res.pca1)
-eig.val1
-dimT1 <- c(1:14)
-#Plot the cumulative percentage variance accounted for versus the index of the Components 0
-plot(dimT1, eig.val1$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-#StreePlot
-fviz_eig(res.pca1)
-#Loading score
-fviz_pca_var(res.pca1,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
 #Running DA
-Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K+Q8K,data=mastercopy2)
+Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K,data=mastercopy2)
 Gender_Knowledge_DA
 
-#LDA preduction
+#LDA prediction
 lda.testing <- predict(Gender_Knowledge_DA)
 #confusion matrix
 accuracy <- table(lda.testing$class,mastercopy2$Gender)
@@ -582,6 +524,9 @@ table(mastercopy2$Q10C5)
 table(mastercopy2$Q10C6)
 table(mastercopy2$Q10C7)
 
+table(mastercopy2$Q10C7)
+
+
 # Fit the full model 
 full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","Q10C5","Q10C6","Q10C7")])
 # Stepwise regression model
@@ -589,47 +534,31 @@ step.model <- stepAIC(full.model, direction = "both",
                       trace = FALSE)
 summary(step.model)
 
-resid(step.model)
-
-#Running PCA on Attitude and preceptions
-names(mastercopy2[,c("Education","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])
-res.pca2 <- prcomp(mastercopy2[,c("Gender","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5","Q10C6","Q10C7")])  
-res.pca2
-summary(res.pca2)
-library("factoextra")
-eig.val2 <- get_eigenvalue(res.pca2)
-eig.val2
-dimT2 <- c(1:8)
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-#StreePlot
-fviz_eig(res.pca2)
-#Loading score
-fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-
-#C. SOCIAL NORMS AFFECTING PLASTIC CHANGING INTENTION AND BEHAVIORS
-res.pca2 <- prcomp(mastercopy2[,c("Q11C1","Q11C2","Q11C3","Q11C4","Q11C5")])  
-res.pca2
-summary(res.pca2)
-library("factoextra")
-eig.val2 <- get_eigenvalue(res.pca2)
-eig.val2
-dimT2 <- c(1:5)
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimT2, eig.val2$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-#StreePlot
-fviz_eig(res.pca2)
-#Loading score
-fviz_pca_var(res.pca2,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-round(cor(mastercopy2[,c("Q11C1","Q11C2","Q11C3","Q11C4","Q11C5")]),2)
-
-cor(mastercopy2$q3k,mastercopy2$Q8K)
-
+#As per knowledge and reserach Q19 and demographic donot contribute much so we remove those from columns
+#Try Factor Analysis
 
 ##Factor Analysis
 
+#Data without question 19
+data_without19 <- mastercopy2[,-(61:66)]
+#we delete col 19 as it is not that much important
+
+#Now we also dont need demographic as per requirement of project
+data<-data_without19[,-(1:5)]
+
+#DEcide number of initial factors
+library(psych)
+decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
+#According to parallel analysis we have 11 factors
+
+#As we see by the parallel analysis number of factor should be 11.
+
+#Try 1
+
+factana1 <- fa(data,nfactors =11)
+fa.diagram(factana1)
+
+<<<<<<< HEAD
 NewDATA<- mastercopy2[,-(1:5)]
 Data_only_Q <- NewDATA[,-(56:61)]
 
@@ -638,23 +567,63 @@ fact_An
 
 library(psych)
 fa.diagram(fact_An$loadings)
+=======
+library(psych)
+fa.diagram(factana1$loadings)
+
+>>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
 install.packages("GPArotation")
 library(GPArotation)
-factana <- fa(Data_only_Q,nfactors = 12)
-fa.diagram(factana)
+factanatry1 <- fa(data,nfactors = 11)
+library(psych)
+fa.diagram(factanatry1)
+colnames(factanatry1$loadings)
 
-#keeping only correlated variables
+colnames(factanatry1$loadings)=c("PlasBeh",
+                        "ReduInt",
+                        "SysResp",
+                        "SocAffect"
+                        ,"NatrConc",
+                        "HealConc"
+                        ,"CondBeh"
+                        ,"IngEff"
+                        ,"BehChan"
+                        ,"ConEfft",
+                        "Diff")
+#As the p value is very low so model is not good.
+
+#keeping only correlated variables keeping cutoff 0.1
 install.packages("caret")
 library('caret')
+<<<<<<< HEAD
 df_cor = findCorrelation(cor(Data_only_Q), cutoff=0.30)
 df_cor
 hc= sort(df_cor)
 data = Data_only_Q[, c(hc)]
 
 factana <- fa(data,nfactors = 8)
+=======
+data_corelated_try1 = findCorrelation(cor(data), cutoff=0.1)
+data_corelated_try1
+hc= sort(data_corelated_try1)
+data_only_corelated_try1 = data[, c(hc)]
+dim(data_only_corelated_try1)
+#We are left with only 42 variables.
+
+factana <- fa(data_only_corelated_try1,nfactors = 11)
+>>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
 fa.diagram(factana)
+#Model Donot improve much So we need to increase the cutoff
 
+#keeping only correlated variables keeping cutoff 0.2
+data_corelated_try2 = findCorrelation(cor(data), cutoff=0.2)
+data_corelated_try2
+hc= sort(data_corelated_try2)
+data_only_corelated_try2 = data[, c(hc)]
+dim(data_only_corelated_try2)
+#We are left with only 31 variables.
 
+<<<<<<< HEAD
 table(mastercopy2$Gender,mastercopy2$q1k)
 
 mastercopy2$Age
@@ -666,3 +635,342 @@ colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Perso
                                  "Health Concern [Att.]", "Social Conditional Intention",
                                  "Impediments","Environemental Concern [Att.]")
 
+=======
+factana <- fa(data_only_corelated_try2,nfactors = 11)
+fa.diagram(factana)
+#Model Improves but we will try with cut off 0.3
+
+#keeping only correlated variables keeping cutoff 0.3
+data_corelated_try3 = findCorrelation(cor(data), cutoff=0.3)
+data_corelated_try3
+hc= sort(data_corelated_try3)
+data_only_corelated_try3 = data[, c(hc)]
+dim(data_only_corelated_try3)
+#We are left with only 16 variables.
+
+#First model with 11 factors
+fact_ana2 <- factanal(data_only_corelated_try3, factors = 11)
+fact_ana2
+factana2 <- fa(data_only_corelated_try3,nfactors =11)
+fa.diagram(factana2)
+
+#Second model with 10 factors
+fact_ana3 <- factanal(data_only_corelated_try3, factors = 10)
+fact_ana3
+factana3 <- fa(data_only_corelated_try3,nfactors =10)
+fa.diagram(factana3)
+
+#Third model with 9 factors
+fact_ana4 <- factanal(data_only_corelated_try3, factors = 9)
+fact_ana4
+factana4 <- fa(data_only_corelated_try3,nfactors =9)
+fa.diagram(factana4)
+colnames(fact_ana4$loadings) =c()
+
+
+#Fourth model with 8 factors
+fact_ana5 <- factanal(data_only_corelated_try3, factors = 8)
+fact_ana5
+factana5 <- fa(data_only_corelated_try3,nfactors =8)
+fa.diagram(factana5)
+
+
+colnames(factana4$loadings) <- c("RecBeh",
+                                 "ManRes",
+                               "behKnow",
+                               "SocAff",
+                               "DiscNylon",
+                               "Conhea",
+                               "Conenv",
+                               "PerBeh",
+                               "KnowSou")
+
+# Chi Square Analysis
+
+#CHiOne fo  gender
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q18I1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q18I2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q18I3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q15C4),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q15C3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q15C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P4),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P5),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C4),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C5),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q11C1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q17P2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q5K4),correct = FALSE) 
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q5K5),correct = FALSE) 
+chisq.test(table(mastercopy2$Gender,mastercopy2$Q5K1),correct = FALSE) 
+
+#Chi Square with Education
+chisq.test(table(mastercopy2$Education,mastercopy2$Q18I1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q18I2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q18I3),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q15C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q15C3),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q15C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P4),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P3),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P5),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C5),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q11C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q17P2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Education,mastercopy2$Q5K4),correct = FALSE)  
+chisq.test(table(mastercopy2$Education,mastercopy2$Q5K5),correct = FALSE)  
+chisq.test(table(mastercopy2$Education,mastercopy2$Q5K1),correct = FALSE) 
+
+#Chi Square with occupation
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q18I1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q18I2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q18I3),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q15C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q15C3),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q15C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P4),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P3),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P5),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C5),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q11C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q17P2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q5K4),correct = FALSE)  
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q5K5),correct = FALSE)  
+chisq.test(table(mastercopy2$Occupation,mastercopy2$Q5K1),correct = FALSE) 
+
+#Chi Square with Income
+chisq.test(table(mastercopy2$Income,mastercopy2$Q18I1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q18I2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q18I3),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q15C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q15C3),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q15C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P4),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P3),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P5),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C4),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C5),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q11C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q17P2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C1),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C2),correct = FALSE) 
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C3),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C5),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q10C6),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q12C1),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q12C2),correct = FALSE)
+chisq.test(table(mastercopy2$Income,mastercopy2$Q5K4),correct = FALSE)  
+chisq.test(table(mastercopy2$Income,mastercopy2$Q5K5),correct = FALSE)  
+chisq.test(table(mastercopy2$Income,mastercopy2$Q5K1),correct = FALSE) 
+
+
+
+
+#####################################################################################################################
+
+# without mice FA
+
+
+
+
+No_miceData <- read.csv("final_No_mice.csv")
+
+##Factor Analysis
+
+#Data without question 19
+data_without19 <- No_miceData[,-(61:66)]
+#we delete col 19 as it is not that much important
+
+#Now we also dont need demographic as per requirement of project
+data<-data_without19[,-(1:5)]
+
+decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
+#According to parallel analysis we have 11 factors
+
+#As we see by the parallel analysis number of factor should be 11.
+
+#Try 1
+#Third model with 12 factors
+factana7 <- fa(data,nfactors =12)
+fa.diagram(factana7)
+
+library(psych)
+fa.diagram(factana7$loadings)
+
+install.packages("GPArotation")
+library(GPArotation)
+factana8 <- fa(data,nfactors = 11)
+fa.diagram(factana8)
+
+#keeping only correlated variables keeping cutoff 0.1
+install.packages("caret")
+library('caret')
+data_corelatedNoMice = findCorrelation(cor(data), cutoff=0.3)
+data_corelatedNoMice
+hc1= sort(data_corelatedNoMice)
+data_corelatedNoMice = data[, c(hc1)]
+dim(data_corelatedNoMice)
+#We are left with only 29 variables.
+
+
+# trying with 11 Factors 
+factana9 <- fa(data_corelatedNoMice,nfactors = 11)
+fa.diagram(factana9)
+
+colnames(factana9$loadings) <- c("reduInt",
+                                  "MngRspb",
+                                  "RefNyln",
+                                  "SocAfct",
+                                  "Atitud",
+                                  "natConc",
+                                  "ruleAbid",
+                                  "PercBeh",
+                                  "AvoidInt",
+                                 "source",
+                                 "Environmentlist")
+
+# Trying with 10 factors
+factanal10 <- factanal(data_corelatedNoMice, factors = 10)
+factanal10
+
+factana10 <- fa(data_corelatedNoMice,nfactors =10)
+
+fa.diagram(factana10)
+
+
+#trying with 9 factors 
+factana11 <- fa(data_corelatedNoMice,nfactors =9)
+fa.diagram(factana11)
+
+factanal11 <- factanal(data_corelatedNoMice, factors = 9)
+factanal11
+
+
+
+colnames(factana11$loadings)
+colnames(factana11$loadings) <- c("RecBeh",
+                                  "MngRspb",
+                                  "Rspb",
+                                  "SocAfct",
+                                  "HltPrcp",
+                                  "EnvCons",
+                                  "EnvMntlst",
+                                  "PercBeh",
+                                  "Knldge")
+
+fa.diagram(factana11)
+
+
+
+
+#############################################################################################################################
+View(data_only_corelated_try3)
+data_only_corelated_try3
+#Corelation Short method
+cordata <-cor(data_only_corelated_try3)
+library(corrplot)
+corrplot(cordata, method="number")
+#Corelation
+cormat <- round(cor(data_only_corelated_try3),2)
+head(cormat)
+install.packages("reshape2")
+library(reshape2)
+melted_cormat <- melt(cormat)
+head(melted_cormat)
+library(ggplot2)
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
+  geom_tile()
+# Get lower triangle of the correlation matrix
+get_lower_tri<-function(cormat){
+  cormat[upper.tri(cormat)] <- NA
+  return(cormat)
+}
+# Get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)
+}
+# Melt the correlation matrix
+library(reshape2)
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Heatmap
+library(ggplot2)
+ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                   size = 12, hjust = 1))+
+  coord_fixed()
+reorder_cormat <- function(cormat){
+  # Use correlation between variables as distance
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Create a ggheatmap
+ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal()+ # minimal theme
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                   size = 12, hjust = 1))+
+  coord_fixed()
+# Print the heatmap
+print(ggheatmap)
+ggheatmap +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.justification = c(1, 0),
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+                               title.position = "top", title.hjust = 0.5))
+
+>>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
