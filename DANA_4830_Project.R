@@ -361,7 +361,7 @@ fviz_pca_var(res.pca7,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00A
 ####Influence on gender on knowledge
 
 Gender_Knowledge =mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
-
+library(MASS)
 Gender_Knowledge_DA <- lda(Gender~q1k+q2k+q3k+q4k+Q6K+Q7K+Q8K+Q9K,data=Gender_Knowledge)
 Gender_Knowledge_DA
 
@@ -528,6 +528,7 @@ table(mastercopy2[,c("Gender","q1k")])[2,]/sum(table(mastercopy2[,c("Gender","q1
 #Percentage for Education vs q1k
 table(mastercopy2[,c("Education","q1k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
 table(mastercopy2[,c("Education","q1k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
+
 table(mastercopy2[,c("Education","q1k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
 table(mastercopy2[,c("Income","q1k")])
 
@@ -634,9 +635,9 @@ Data_only_Q <- NewDATA[,-(56:61)]
 
 fact_An <- factanal(Data_only_Q, factors = 20)
 fact_An
+
 library(psych)
 fa.diagram(fact_An$loadings)
-
 install.packages("GPArotation")
 library(GPArotation)
 factana <- fa(Data_only_Q,nfactors = 12)
@@ -646,18 +647,12 @@ fa.diagram(factana)
 install.packages("caret")
 library('caret')
 df_cor = findCorrelation(cor(Data_only_Q), cutoff=0.30)
+df_cor
 hc= sort(df_cor)
 data = Data_only_Q[, c(hc)]
 
 factana <- fa(data,nfactors = 8)
 fa.diagram(factana)
-
-
-
-
-
-
-
 
 
 table(mastercopy2$Gender,mastercopy2$q1k)
@@ -670,6 +665,4 @@ chisq.test(table(mastercopy2$Gender,mastercopy2$q1k),correct = FALSE)  #p-value 
 colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
                                  "Health Concern [Att.]", "Social Conditional Intention",
                                  "Impediments","Environemental Concern [Att.]")
-
-
 
