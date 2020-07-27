@@ -363,7 +363,7 @@ fviz_pca_var(res.pca6,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00A
 ####Influence on gender on knowledge
 
 Gender_Knowledge =mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
-
+library(MASS)
 Gender_Knowledge_DA <- lda(Gender~q1k+q2k+q3k+q4k+Q6K+Q7K+Q8K+Q9K,data=Gender_Knowledge)
 Gender_Knowledge_DA
 
@@ -477,6 +477,7 @@ table(mastercopy2[,c("Gender","q1k")])[2,]/sum(table(mastercopy2[,c("Gender","q1
 #Percentage for Education vs q1k
 table(mastercopy2[,c("Education","q1k")])[1,]/sum(table(mastercopy2[,c("Education","q1k")])[1,])*100
 table(mastercopy2[,c("Education","q1k")])[2,]/sum(table(mastercopy2[,c("Education","q1k")])[2,])*100
+
 table(mastercopy2[,c("Education","q1k")])[3,]/sum(table(mastercopy2[,c("Education","q1k")])[3,])*100
 table(mastercopy2[,c("Income","q1k")])
 
@@ -564,9 +565,20 @@ decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
 factana1 <- fa(data,nfactors =11)
 fa.diagram(factana1)
 
+<<<<<<< HEAD
+NewDATA<- mastercopy2[,-(1:5)]
+Data_only_Q <- NewDATA[,-(56:61)]
+
+fact_An <- factanal(Data_only_Q, factors = 20)
+fact_An
+
+library(psych)
+fa.diagram(fact_An$loadings)
+=======
 library(psych)
 fa.diagram(factana1$loadings)
 
+>>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
 install.packages("GPArotation")
 library(GPArotation)
 factanatry1 <- fa(data,nfactors = 11)
@@ -590,6 +602,14 @@ colnames(factanatry1$loadings)=c("PlasBeh",
 #keeping only correlated variables keeping cutoff 0.1
 install.packages("caret")
 library('caret')
+<<<<<<< HEAD
+df_cor = findCorrelation(cor(Data_only_Q), cutoff=0.30)
+df_cor
+hc= sort(df_cor)
+data = Data_only_Q[, c(hc)]
+
+factana <- fa(data,nfactors = 8)
+=======
 data_corelated_try1 = findCorrelation(cor(data), cutoff=0.1)
 data_corelated_try1
 hc= sort(data_corelated_try1)
@@ -598,6 +618,7 @@ dim(data_only_corelated_try1)
 #We are left with only 42 variables.
 
 factana <- fa(data_only_corelated_try1,nfactors = 11)
+>>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
 fa.diagram(factana)
 #Model Donot improve much So we need to increase the cutoff
 
@@ -609,6 +630,19 @@ data_only_corelated_try2 = data[, c(hc)]
 dim(data_only_corelated_try2)
 #We are left with only 31 variables.
 
+<<<<<<< HEAD
+table(mastercopy2$Gender,mastercopy2$q1k)
+
+mastercopy2$Age
+
+chisq.test(table(mastercopy2$Gender,mastercopy2$q1k),correct = FALSE)  #p-value = 0.0006377 , Reject NUll it means gender and quetion 1 is dependent on each other. 
+
+
+colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
+                                 "Health Concern [Att.]", "Social Conditional Intention",
+                                 "Impediments","Environemental Concern [Att.]")
+
+=======
 factana <- fa(data_only_corelated_try2,nfactors = 11)
 fa.diagram(factana)
 #Model Improves but we will try with cut off 0.3
@@ -1032,3 +1066,4 @@ ggheatmap +
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))
 
+>>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
