@@ -1,7 +1,14 @@
 # Checking Accuracy of Data
 
 #Import the data and make copy of data
+
+
 master <- read.csv("Data-screening-1 (1).csv")
+
+
+
+
+
 
 mastercopy <- master
 
@@ -782,7 +789,41 @@ data_without19 <- No_miceData[,-(61:66)]
 #Now we also dont need demographic as per requirement of project
 data<-data_without19[,-(1:5)]
 
-decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
+# PCA 
+
+# A Demographic and Knowledge 
+View(No_miceData)
+No_miceData[1:19]
+noMicePca <- prcomp(No_miceData[1:19],scale= TRUE)  
+summary(noMicePca)
+
+
+library("factoextra")
+noMiceEig <- get_eigenvalue(noMicePca)
+noMiceEig
+
+dimNomice <- c(1:19)
+
+#Plot the cumulative percentage variance accounted for versus the index of the Components 
+plot(dimNomice, noMiceEig$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
+
+#StreePlot
+fviz_eig(noMicePca)
+
+#Loading score
+fviz_pca_var(noMicePca,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+
+# 
+factana12 <- fa(No_miceData[6:19],nfactors =8)
+fa.diagram(factana12)
+summary(factana12)
+
+factanal12 <- factanal(No_miceData[1:19], factors = 8)
+factanal12
+####
+
+decidefactor <- fa.parallel(No_miceData[6:19],fm ='ml', fa = 'fa')
 #According to parallel analysis we have 11 factors
 
 #As we see by the parallel analysis number of factor should be 11.
@@ -791,14 +832,24 @@ decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
 #Third model with 12 factors
 factana7 <- fa(data,nfactors =12)
 fa.diagram(factana7)
+summary(factana7)
 
 library(psych)
 fa.diagram(factana7$loadings)
+
+
+factanal7 <- factanal(data, factors = 12)
+factanal7
 
 install.packages("GPArotation")
 library(GPArotation)
 factana8 <- fa(data,nfactors = 11)
 fa.diagram(factana8)
+
+summary(factana8)
+
+factanal8 <- factanal(data, factors = 11)
+factanal8
 
 #keeping only correlated variables keeping cutoff 0.1
 install.packages("caret")
@@ -814,7 +865,9 @@ dim(data_corelatedNoMice)
 # trying with 11 Factors 
 factana9 <- fa(data_corelatedNoMice,nfactors = 11)
 fa.diagram(factana9)
-
+summary(factana9)
+factanal9 <- factanal(data_corelatedNoMice, factors = 11)
+factanal9
 colnames(factana9$loadings) <- c("reduInt",
                                   "MngRspb",
                                   "RefNyln",
@@ -828,23 +881,30 @@ colnames(factana9$loadings) <- c("reduInt",
                                  "Environmentlist")
 
 # Trying with 10 factors
-factanal10 <- factanal(data_corelatedNoMice, factors = 10)
+factanal10 <- factanal(data, factors = 10)
 factanal10
 
-factana10 <- fa(data_corelatedNoMice,nfactors =10)
-
+factana10 <- fa(data,nfactors =10)
+summary(factana10)
 fa.diagram(factana10)
 
 
 #trying with 9 factors 
-factana11 <- fa(data_corelatedNoMice,nfactors =9)
+factana11 <- fa(data,nfactors =9)
 fa.diagram(factana11)
+summary(factana11)
 
-factanal11 <- factanal(data_corelatedNoMice, factors = 9)
+factanal11 <- factanal(data, factors = 9)
 factanal11
 
 
+#trying with 8 factors 
+factana11 <- fa(data,nfactors =8)
+fa.diagram(factana11)
+summary(factana11)
 
+factanal11 <- factanal(data, factors = 8)
+factanal11
 colnames(factana11$loadings)
 colnames(factana11$loadings) <- c("RecBeh",
                                   "MngRspb",
@@ -859,8 +919,41 @@ colnames(factana11$loadings) <- c("RecBeh",
 fa.diagram(factana11)
 
 
+############
+# try with corelated 
+factana12 <- fa(data_corelatedNoMice,nfactors = 12)
+fa.diagram(factana12)
+summary(factana12)
+factana12 <- factanal(data_corelatedNoMice, factors = 12)
+factana12
 
+# try with corelated 
+factana13 <- fa(data_corelatedNoMice,nfactors = 11)
+fa.diagram(factana13)
+summary(factana13)
+factanal13 <- factanal(data_corelatedNoMice, factors = 11)
+factanal13
 
+# try with corelated 
+factana14 <- fa(data_corelatedNoMice,nfactors = 10)
+fa.diagram(factana14)
+summary(factana14)
+factanal14 <- factanal(data_corelatedNoMice, factors = 10)
+factanal14
+
+# try with corelated 
+factana15 <- fa(data_corelatedNoMice,nfactors = 9)
+fa.diagram(factana15)
+summary(factana15)
+factanal15 <- factanal(data_corelatedNoMice, factors = 9)
+factanal15
+
+# try with corelated 
+factana16 <- fa(data_corelatedNoMice,nfactors = 8)
+fa.diagram(factana16)
+summary(factana16)
+factanal16 <- factanal(data_corelatedNoMice, factors = 8)
+factanal16
 #############################################################################################################################
 View(data_only_corelated_try3)
 data_only_corelated_try3
