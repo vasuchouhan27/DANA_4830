@@ -72,8 +72,7 @@ lapply(mastercopy, unique)[33:52]
 
 #As in Q12, option 8 is not there. Now, we will remove that column. 
 library("dplyr")
-mastercopy <- select(mastercopy, -Q12C8)
-
+mastercopy <- mastercopy[ -c(39) ]
 #Now update other column as needed according to appedix.
 
 mastercopy$Q12C1 <- factor(mastercopy$Q12C1, levels = c(1,2,3,4,5,6))
@@ -117,27 +116,14 @@ lapply(mastercopy,unique)[66:71]
 names(mastercopy)[66:71] <- c("Q19C1","Q19C2","Q19C3","Q19C4","Q19c5","Q19c6")
 
 dim((mastercopy))
-#Changing type of 12 into numeric as we need to change the its vale
-mastercopy$Q12C1<- as.numeric(mastercopy$Q12C1)
-mastercopy$Q12C2<- as.numeric(mastercopy$Q12C2)
-mastercopy$Q12C3<- as.numeric(mastercopy$Q12C3)
-mastercopy$Q12C4<- as.numeric(mastercopy$Q12C4)
-mastercopy$Q12C5<- as.numeric(mastercopy$Q12C5)
-mastercopy$Q12C6<- as.numeric(mastercopy$Q12C6)
-
-#Changing Q12 values to 1
-mastercopy$Q12C1[mastercopy$Q12C1 > 1] = 1
-mastercopy$Q12C2[mastercopy$Q12C2 > 1] = 1
-mastercopy$Q12C3[mastercopy$Q12C3 > 1] = 1
-mastercopy$Q12C4[mastercopy$Q12C4 > 1] = 1
-mastercopy$Q12C5[mastercopy$Q12C5 > 1] = 1
-mastercopy$Q12C6[mastercopy$Q12C6 > 1] = 1
 
 ## Accuracy done.
 
 # Missing Values
 #Lets have a look on the missing values in our data.
 mastercopy1<-mastercopy
+write.csv(mastercopy1, file = "mastercopy1.csv")
+
 mastercopy1<-read.csv("mastercopy1.csv",stringsAsFactors = FALSE)
 library("naniar")
 vis_miss(mastercopy1)
@@ -152,35 +138,35 @@ dim(mastercopy1)
 
   #to fill zero in multiple choice questions
   #We Start with Q5
-  names(mastercopy1[10:15])
-  mastercopy1[10:15][is.na(mastercopy1[10:15])] <- 0
+  names(mastercopy1[11:16])
+  mastercopy1[11:16][is.na(mastercopy1[11:16])] <- 0
   
   #with Q12
-  lapply(mastercopy1,names)[33:37]
-  mastercopy1[33:37][is.na(mastercopy1[33:37])] <- 0
+  lapply(mastercopy1,names)[33:38]
+  mastercopy1[33:38][is.na(mastercopy1[33:38])] <- 0
   
   #with Q13
-  names(mastercopy1[38:42])
-  mastercopy1[38:42][is.na(mastercopy1[38:42])] <- 0
-  mastercopy1[38:42][mastercopy1[38:42] > 1] <- 1
+  names(mastercopy1[39:43])
+  mastercopy1[39:43][is.na(mastercopy1[39:43])] <- 0
+  mastercopy1[39:43][mastercopy1[39:43] > 1] <- 1
   
   #with Q15
-  names(mastercopy1)[44:48]
-  mastercopy1[44:48][is.na(mastercopy1[44:48])] <- 0
+  names(mastercopy1)[45:49]
+  mastercopy1[45:49][is.na(mastercopy1[45:49])] <- 0
   
   #with Q16
-  names(mastercopy1)[49:51]
-  mastercopy1[49:51][is.na(mastercopy1[49:51])] <- 0
+  names(mastercopy1)[50:52]
+  mastercopy1[50:52][is.na(mastercopy1[50:52])] <- 0
   
   #with Q19
-  names(mastercopy1)[61:66]
-  mastercopy1[61:66][is.na(mastercopy1[61:66])] <- 0
+  names(mastercopy1)[62:67]
+  mastercopy1[62:67][is.na(mastercopy1[62:67])] <- 0
   dim(mastercopy1)
   vis_miss(mastercopy1)
 
   
 
-  # Creating a data set by just removing null values. 
+# Creating a data set by just removing null values. 
 noMiceDataset <- na.omit(mastercopy1)
 dim(noMiceDataset)
 vis_miss(noMiceDataset)  
@@ -191,7 +177,6 @@ summary(mastercopy1)
   
 
 #Q19 descriptive analysis
-View(mastercopy1)
 table(mastercopy1$Q19C1)
 table(mastercopy1$Q19C2)
 table(mastercopy1$Q19C3)
@@ -200,12 +185,10 @@ table(mastercopy1$Q19c5)
 table(mastercopy1$Q19c6)
 
 
-
 #Applying Mice to fill null values
-install.packages("mice")
 library(mice)
 nomissdf= mice(mastercopy1)
-df1=complete(nomissdf,1)
+df1=complete(nomissdf,2)
 summary(df1)
 library(naniar)
 vis_miss(df1)
@@ -433,6 +416,7 @@ table(mastercopy2[,c("Gender","Q10C1")])[2,]/sum(table(mastercopy2[,c("Gender","
 
 
 #Running DA
+library(MASS)
 Gender_Knowledge_DA <- lda(Gender~q2k+q3k+Q6K,data=mastercopy2)
 Gender_Knowledge_DA
 
@@ -528,7 +512,7 @@ data<-data_without19[,-(1:5)]
 
 #DEcide number of initial factors
 library(psych)
-decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
+decidefactor <- fa.parallel(data, fm ='ml', fa = 'fa')
 #According to parallel analysis we have 11 factors
 
 #As we see by the parallel analysis number of factor should be 11.
@@ -901,6 +885,9 @@ library(MASS)
 library("FactoMineR")
 library("factoextra")
 
+#nomice copy
+noMiceDataset<-Nomice
+
 Edu.health1 <- table(noMiceDataset$Education,noMiceDataset$Q17P1)
 Edu.health2 <- table(noMiceDataset$Education,noMiceDataset$Q17P2)
 Edu.health3 <- table(noMiceDataset$Education,noMiceDataset$Q17P3)
@@ -1030,85 +1017,48 @@ ca.age.att4
 ca.age.att5 <- CA(Age.Atti5,graph = TRUE)
 ca.age.att5
 
+#Knowledge score
 
+Nomice1 <-  Nomice
+table(Nomice1$q1k)
 
-#####################################################################################################################
-#############################################################################################################################
-View(data_only_corelated_try3)
-data_only_corelated_try3
-#Corelation Short method
-cordata <-cor(data_only_corelated_try3)
-library(corrplot)
-corrplot(cordata, method="number")
-#Corelation
-cormat <- round(cor(data_only_corelated_try3),2)
-head(cormat)
-install.packages("reshape2")
-library(reshape2)
-melted_cormat <- melt(cormat)
-head(melted_cormat)
-library(ggplot2)
-ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
-  geom_tile()
-# Get lower triangle of the correlation matrix
-get_lower_tri<-function(cormat){
-  cormat[upper.tri(cormat)] <- NA
-  return(cormat)
-}
-# Get upper triangle of the correlation matrix
-get_upper_tri <- function(cormat){
-  cormat[lower.tri(cormat)]<- NA
-  return(cormat)
-}
-# Melt the correlation matrix
-library(reshape2)
-melted_cormat <- melt(upper_tri, na.rm = TRUE)
-# Heatmap
-library(ggplot2)
-ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
-  geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
-                       midpoint = 0, limit = c(-1,1), space = "Lab",
-                       name="Pearson\nCorrelation") +
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1,
-                                   size = 12, hjust = 1))+
-  coord_fixed()
-reorder_cormat <- function(cormat){
-  # Use correlation between variables as distance
-  dd <- as.dist((1-cormat)/2)
-  hc <- hclust(dd)
-  cormat <-cormat[hc$order, hc$order]
-}
-# Reorder the correlation matrix
-cormat <- reorder_cormat(cormat)
-upper_tri <- get_upper_tri(cormat)
-# Melt the correlation matrix
-melted_cormat <- melt(upper_tri, na.rm = TRUE)
-# Create a ggheatmap
-ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
-  geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
-                       midpoint = 0, limit = c(-1,1), space = "Lab",
-                       name="Pearson\nCorrelation") +
-  theme_minimal()+ # minimal theme
-  theme(axis.text.x = element_text(angle = 45, vjust = 1,
-                                   size = 12, hjust = 1))+
-  coord_fixed()
-# Print the heatmap
-print(ggheatmap)
-ggheatmap +
-  theme(
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.border = element_blank(),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    legend.justification = c(1, 0),
-    legend.position = c(0.6, 0.7),
-    legend.direction = "horizontal")+
-  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
-                               title.position = "top", title.hjust = 0.5))
+#Changing Q1 to correct option
+Nomice1$q1k[!Nomice1$q1k == 2] = 0
+Nomice1$q1k[Nomice1$q1k == 2] = 1
 
+#For Q2
+Nomice1$q2k[!Nomice1$q2k == 1] = 0
+
+#For Q3
+Nomice1$q3k[!Nomice1$q3k == 3] = 0
+Nomice1$q3k[Nomice1$q3k == 3] = 1
+
+#For Q4
+Nomice1$q4k[!Nomice1$q4k == 1] = 0
+
+#For Q5
+#All correct
+
+#For Q6
+Nomice1$Q6K[!Nomice1$Q6K == 1] = 0
+
+#For Q7
+Nomice1$Q7K[!Nomice1$Q7K == c(2,3)] = 0
+Nomice1$Q7K[Nomice1$Q7K == c(2,3)] = 1
+
+#For Q8
+Nomice1$Q8K[!Nomice1$Q8K == 1] = 0
+
+#For Q9
+Nomice1$Q9K[!Nomice1$Q9K == 1] = 0
+
+## 
+
+Nomice1$knwSum <- (Nomice1$q1k+Nomice1$q2k+Nomice1$q3k+Nomice1$q4+Nomice1$Q6K+Nomice1$Q7K+Nomice1$Q8K+Nomice1$Q9K)
+
+Nomice1$sum5 <- (Nomice1$Q5K1+Nomice1$Q5K2+Nomice1$Q5K3+Nomice1$Q5K4+Nomice1$Q5K5+Nomice1$Q5K6)/6
+
+Nomice1$knwSum <- Nomice1$knwSum + Nomice1$sum5
+
+write.csv(Nomice1,"Nomice1.csv")
 
