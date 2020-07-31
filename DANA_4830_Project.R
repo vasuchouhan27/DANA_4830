@@ -373,44 +373,6 @@ fviz_eig(res.pca6)
 fviz_pca_var(res.pca6,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 ####Influence on gender on knowledge
 
-Gender_Knowledge =mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
-library(MASS)
-Gender_Knowledge_DA <- lda(Gender~q1k+q2k+q3k+q4k+Q6K+Q7K+Q8K+Q9K,data=Gender_Knowledge)
-Gender_Knowledge_DA
-
-#LDA preduction
-lda.testing <- predict(Gender_Knowledge_DA)
-#confusion matrix
-accuracy <- table(lda.testing$class,mastercopy2$Gender)
-accuracy
-sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
-
-#Regression Try
-
-# Fit the full model 
-full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
-#Stepwise regression
-library(MASS)
-step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
-summary(step.model)
-#CAnt do regression as it has very low p value.
-
-#Make another data to try logistic regression
-mastercopy3 <- mastercopy2
-mastercopy3$Gender[mastercopy3$Gender==2]=0
-
-#Logistic regression
-Reg_log_Gender_Know<- glm(Gender~ factor(q1k)+factor(q2k)+factor(q3k)+factor(q4k)+factor(Q6K)
-                          +factor(Q7K)+factor(Q8K)+factor(Q9K), family=binomial, data=mastercopy3[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
-summary(Reg_log_Gender_Know)
-
-pchisq(1110.5-1036.7, df = 982-963, lower.tail = FALSE)
-
-Gender_q1k <- mastercopy2[,c("Gender","q1k")] 
-#CHECKING ANSWR OF GENDER VS Q1k
-unique(Gender_q1k)
-
-
 #Checking answer of gender vs Knowledge
 table(mastercopy2[,c("Gender","q1k")])
 #Percentage for gender vs q1k
@@ -760,6 +722,31 @@ factnomice_6 <- fa(Nomicecor,nfactors =6)
 summary(factnomice_6)
 fa.diagram(factnomice_6)
 
+######LDA PREDICTING GENDER ON THE BASIS OF THEIR PLASTIC RELATED BEHAVIOUR
+
+Gender_beh =mastercopy2[,c("Gender","Q17P1","Q17P2","Q17P3","Q17P4","Q17P5")]
+library(MASS)
+Gender_beh_DA <- lda(Gender~Q17P1+Q17P2+Q17P3+Q17P4+Q17P5,data=Gender_Knowledge)
+Gender_beh_DA
+
+#LDA preduction
+lda.testing <- predict(Gender_beh_DA)
+#confusion matrix
+accuracy <- table(lda.testing$class,Gender_beh$Gender)
+accuracy
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
+
+#Regression Try
+
+# Fit the full model 
+full.model <- lm(Gender ~., data = Gender_beh)
+summary(full.model)
+#Stepwise regression
+library(MASS)
+step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+summary(step.model)
+#CAnt do regression as it has very low p value.
+
 
 
 # Chi Square Analysis
@@ -876,188 +863,6 @@ chisq.test(table(mastercopy2$Income,mastercopy2$Q5K1),correct = FALSE)
 
 
 #####################################################################################################################
-
-# without mice FA
-
-
-
-
-No_miceData <- read.csv("final_No_mice.csv")
-noMiceDataset<- No_miceData
-##Factor Analysis
-
-#Data without question 19
-data_without19 <- No_miceData[,-(61:66)]
-#we delete col 19 as it is not that much important
-
-#Now we also dont need demographic as per requirement of project
-data<-data_without19[,-(1:5)]
-
-# PCA 
-
-# A Demographic and Knowledge 
-View(No_miceData)
-No_miceData[1:19]
-noMicePca <- prcomp(No_miceData[1:19],scale= TRUE)  
-summary(noMicePca)
-
-
-library("factoextra")
-noMiceEig <- get_eigenvalue(noMicePca)
-noMiceEig
-
-dimNomice <- c(1:19)
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimNomice, noMiceEig$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(noMicePca)
-
-#Loading score
-fviz_pca_var(noMicePca,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-
-# 
-factana12 <- fa(No_miceData[6:19],nfactors =8)
-fa.diagram(factana12)
-summary(factana12)
-
-factanal12 <- factanal(No_miceData[1:19], factors = 8)
-factanal12
-####
-
-decidefactor <- fa.parallel(No_miceData[6:19],fm ='ml', fa = 'fa')
-#According to parallel analysis we have 11 factors
-
-#As we see by the parallel analysis number of factor should be 11.
-
-#Try 1
-#Third model with 12 factors
-factana7 <- fa(data,nfactors =12)
-fa.diagram(factana7)
-summary(factana7)
-
-library(psych)
-fa.diagram(factana7$loadings)
-
-
-factanal7 <- factanal(data, factors = 12)
-factanal7
-
-install.packages("GPArotation")
-library(GPArotation)
-factana8 <- fa(data,nfactors = 11)
-fa.diagram(factana8)
-
-summary(factana8)
-
-factanal8 <- factanal(data, factors = 11)
-factanal8
-
-#keeping only correlated variables keeping cutoff 0.1
-install.packages("caret")
-library('caret')
-data_corelatedNoMice = findCorrelation(cor(data), cutoff=0.3)
-data_corelatedNoMice
-hc1= sort(data_corelatedNoMice)
-data_corelatedNoMice = data[, c(hc1)]
-dim(data_corelatedNoMice)
-#We are left with only 29 variables.
-
-
-# trying with 11 Factors 
-factana9 <- fa(data_corelatedNoMice,nfactors = 11)
-fa.diagram(factana9)
-summary(factana9)
-factanal9 <- factanal(data_corelatedNoMice, factors = 11)
-factanal9
-colnames(factana9$loadings) <- c("reduInt",
-                                  "MngRspb",
-                                  "RefNyln",
-                                  "SocAfct",
-                                  "Atitud",
-                                  "natConc",
-                                  "ruleAbid",
-                                  "PercBeh",
-                                  "AvoidInt",
-                                 "source",
-                                 "Environmentlist")
-
-# Trying with 10 factors
-factanal10 <- factanal(data, factors = 10)
-factanal10
-
-factana10 <- fa(data,nfactors =10)
-summary(factana10)
-fa.diagram(factana10)
-
-
-#trying with 9 factors 
-factana11 <- fa(data,nfactors =9)
-fa.diagram(factana11)
-summary(factana11)
-
-factanal11 <- factanal(data, factors = 9)
-factanal11
-
-
-#trying with 8 factors 
-factana11 <- fa(data,nfactors =8)
-fa.diagram(factana11)
-summary(factana11)
-
-factanal11 <- factanal(data, factors = 8)
-factanal11
-colnames(factana11$loadings)
-colnames(factana11$loadings) <- c("RecBeh",
-                                  "MngRspb",
-                                  "Rspb",
-                                  "SocAfct",
-                                  "HltPrcp",
-                                  "EnvCons",
-                                  "EnvMntlst",
-                                  "PercBeh",
-                                  "Knldge")
-
-fa.diagram(factana11)
-
-
-############
-# try with corelated 
-factana12 <- fa(data_corelatedNoMice,nfactors = 12)
-fa.diagram(factana12)
-summary(factana12)
-factana12 <- factanal(data_corelatedNoMice, factors = 12)
-factana12
-
-# try with corelated 
-factana13 <- fa(data_corelatedNoMice,nfactors = 11)
-fa.diagram(factana13)
-summary(factana13)
-factanal13 <- factanal(data_corelatedNoMice, factors = 11)
-factanal13
-
-# try with corelated 
-factana14 <- fa(data_corelatedNoMice,nfactors = 10)
-fa.diagram(factana14)
-summary(factana14)
-factanal14 <- factanal(data_corelatedNoMice, factors = 10)
-factanal14
-
-# try with corelated 
-factana15 <- fa(data_corelatedNoMice,nfactors = 9)
-fa.diagram(factana15)
-summary(factana15)
-factanal15 <- factanal(data_corelatedNoMice, factors = 9)
-factanal15
-
-# try with corelated 
-factana16 <- fa(data_corelatedNoMice,nfactors = 8)
-fa.diagram(factana16)
-summary(factana16)
-factanal16 <- factanal(data_corelatedNoMice, factors = 8)
-factanal16
 #############################################################################################################################
 View(data_only_corelated_try3)
 data_only_corelated_try3
