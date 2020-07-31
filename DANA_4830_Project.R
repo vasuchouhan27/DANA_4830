@@ -719,6 +719,47 @@ Nomicecor = Nomice[, c(hc)]
 dim(Nomicecor)
 #We are left with only 29 variables.
 
+#Decide number of factors
+#DEcide number of initial factors
+library(psych)
+decidefactor <- fa.parallel(Nomicecor,fm ='ml', fa = 'fa')
+#According to parallel analysis we have 9 factors
+#First model with 10 factors
+factnomice10 <- factanal(Nomicecor, factors = 10)
+factnomice10
+factnomice_10 <- fa(Nomicecor,nfactors =10)
+summary(factnomice_10)
+fa.diagram(factnomice_10)
+
+#Second model with 9 factors
+factnomice9 <- factanal(Nomicecor, factors = 9)
+factnomice9
+factnomice_9 <- fa(Nomicecor,nfactors =9)
+summary(factnomice_9)
+fa.diagram(factnomice_9)
+
+#Third model with 8 factors
+factnomice8 <- factanal(Nomicecor, factors = 8)
+factnomice8
+factnomice_8 <- fa(Nomicecor,nfactors =8)
+summary(factnomice_8)
+fa.diagram(factnomice_8)
+
+
+#Forth model with 7 factors
+factnomice7 <- factanal(Nomicecor, factors = 7)
+factnomice7
+factnomice_7 <- fa(Nomicecor,nfactors =7)
+summary(factnomice_7)
+fa.diagram(factnomice_7)
+
+#Fifth model with 6 factors
+factnomice6 <- factanal(Nomicecor, factors = 6)
+factnomice6
+factnomice_6 <- fa(Nomicecor,nfactors =6)
+summary(factnomice_6)
+fa.diagram(factnomice_6)
+
 
 
 # Chi Square Analysis
