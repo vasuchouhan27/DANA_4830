@@ -685,7 +685,6 @@ dim(Nomicecor)
 #DEcide number of initial factors
 library(psych)
 decidefactor <- fa.parallel(Nomicecor,fm ='ml', fa = 'fa')
-#According to parallel analysis we have 9 factors
 #First model with 10 factors
 factnomice10 <- factanal(Nomicecor, factors = 10)
 factnomice10
@@ -726,7 +725,7 @@ fa.diagram(factnomice_6)
 
 Gender_beh =mastercopy2[,c("Gender","Q17P1","Q17P2","Q17P3","Q17P4","Q17P5")]
 library(MASS)
-Gender_beh_DA <- lda(Gender~Q17P1+Q17P2+Q17P3+Q17P4+Q17P5,data=Gender_Knowledge)
+Gender_beh_DA <- lda(Gender~Q17P1+Q17P2+Q17P3+Q17P4+Q17P5,data=Gender_beh)
 Gender_beh_DA
 
 #LDA preduction
@@ -740,6 +739,44 @@ sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
 
 # Fit the full model 
 full.model <- lm(Gender ~., data = Gender_beh)
+summary(full.model)
+#Stepwise regression
+library(MASS)
+step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+summary(step.model)
+#CAnt do regression as it has very low p value.
+
+# Gender and attitude
+Gender_att =mastercopy2[,c("Gender","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5")]
+library(MASS)
+Gender_att_DA <- lda(Gender~Q10C1+Q10C2+Q10C3+Q10C4+Q10C5,data=Gender_att)
+Gender_att_DA
+
+#LDA preduction
+lda.testing <- predict(Gender_att_DA)
+#confusion matrix
+accuracy <- table(lda.testing$class,Gender_att$Gender)
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
+
+
+######LDA PREDICTING EDUCATION ON THE BASIS OF THEIR PLASTIC RELATED BEHAVIOUR
+
+Edu_beh =mastercopy2[,c("Education","Q17P1","Q17P2","Q17P3","Q17P4","Q17P5")]
+library(MASS)
+Edu_beh_DA <- lda(Education~Q17P1+Q17P2+Q17P3+Q17P4+Q17P5,data=Edu_beh)
+Edu_beh_DA
+
+#LDA preduction
+lda.testing <- predict(Edu_beh_DA)
+#confusion matrix
+accuracy <- table(lda.testing$class,Edu_beh$Education)
+accuracy
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
+
+#Regression Try
+
+# Fit the full model 
+full.model <- lm(Education ~., data = Edu_beh)
 summary(full.model)
 #Stepwise regression
 library(MASS)
@@ -859,6 +896,139 @@ chisq.test(table(mastercopy2$Income,mastercopy2$Q5K4),correct = FALSE)
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K5),correct = FALSE)  
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K1),correct = FALSE) 
 
+#Corrospondance Analysis
+library(MASS)
+library("FactoMineR")
+library("factoextra")
+
+Edu.health1 <- table(noMiceDataset$Education,noMiceDataset$Q17P1)
+Edu.health2 <- table(noMiceDataset$Education,noMiceDataset$Q17P2)
+Edu.health3 <- table(noMiceDataset$Education,noMiceDataset$Q17P3)
+Edu.health4 <- table(noMiceDataset$Education,noMiceDataset$Q17P4)
+Edu.health5 <- table(noMiceDataset$Education,noMiceDataset$Q17P5)
+
+table(noMiceDataset$Education)
+
+
+ca.edu.health1 <- CA(Edu.health1, graph = TRUE)
+ca.edu.health1
+ca.edu.health2 <- CA(Edu.health2, graph = TRUE)
+ca.edu.health2
+ca.edu.health3 <- CA(Edu.health3, graph = TRUE)
+ca.edu.health3
+ca.edu.health4 <- CA(Edu.health4, graph = TRUE)
+ca.edu.health4
+ca.edu.health5 <- CA(Edu.health5, graph = TRUE)
+ca.edu.health5
+
+Edu.Inten1 <- table(noMiceDataset$Education,noMiceDataset$Q18I3)
+Edu.Inten2 <- table(noMiceDataset$Education,noMiceDataset$Q18I2)
+Edu.Inten3 <- table(noMiceDataset$Education,noMiceDataset$Q18I1)
+
+ca.edu.inten1 <- CA(Edu.Inten1,graph = TRUE)
+ca.edu.inten1
+ca.edu.inten2 <- CA(Edu.Inten2,graph = TRUE)
+ca.edu.inten2
+ca.edu.inten3 <- CA(Edu.Inten3,graph = TRUE)
+ca.edu.inten3
+
+Edu.Atti1 <- table(noMiceDataset$Education,noMiceDataset$Q10C1)
+Edu.Atti2 <- table(noMiceDataset$Education,noMiceDataset$Q10C2)
+Edu.Atti3 <- table(noMiceDataset$Education,noMiceDataset$Q10C3)
+Edu.Atti4 <- table(noMiceDataset$Education,noMiceDataset$Q10C4)
+Edu.Atti5 <- table(noMiceDataset$Education,noMiceDataset$Q10C5)
+
+ca.edu.att1 <- CA(Edu.Atti1,graph = TRUE)
+ca.edu.att1
+ca.edu.att2 <- CA(Edu.Atti2,graph = TRUE)
+ca.edu.att2
+ca.edu.att3 <- CA(Edu.Atti3,graph = TRUE)
+ca.edu.att3
+ca.edu.att4 <- CA(Edu.Atti4,graph = TRUE)
+ca.edu.att4
+ca.edu.att5 <- CA(Edu.Atti5,graph = TRUE)
+ca.edu.att5
+
+Edu.Knw1 <- table(noMiceDataset$Education,noMiceDataset$Q5K1)
+Edu.Knw4 <- table(noMiceDataset$Education,noMiceDataset$Q5K4)
+Edu.Knw5 <- table(noMiceDataset$Education,noMiceDataset$Q5K5)
+
+ca.edu.knw1 <- CA(Edu.Knw1, graph = TRUE)
+ca.edu.knw1
+ca.edu.knw4 <- CA(Edu.Knw4, graph = TRUE)
+ca.edu.knw4
+ca.edu.knw5 <- CA(Edu.Knw5, graph = TRUE)
+ca.edu.knw5
+
+#With Gender
+G.Atti1 <- table(noMiceDataset$Gender,noMiceDataset$Q10C1)
+G.Atti2 <- table(noMiceDataset$Gender,noMiceDataset$Q10C2)
+G.Atti3 <- table(noMiceDataset$Gender,noMiceDataset$Q10C3)
+G.Atti4 <- table(noMiceDataset$Gender,noMiceDataset$Q10C4)
+G.Atti5 <- table(noMiceDataset$Gender,noMiceDataset$Q10C5)
+
+ca.G.att1 <- CA(G.Atti1,graph = TRUE)
+ca.G.att1
+ca.G.att2 <- CA(G.Atti2,graph = TRUE)
+ca.G.att2
+ca.G.att3 <- CA(G.Atti3,graph = TRUE)
+ca.G.att3
+ca.G.att4 <- CA(G.Atti4,graph = TRUE)
+ca.G.att4
+ca.G.att5 <- CA(G.Atti5,graph = TRUE)
+ca.G.att5
+
+
+# With Age
+noMiceDataset_AGE <- noMiceDataset
+noMiceDataset_AGE$AGEcat <- cut(noMiceDataset_AGE$Age, c(12,18,25,40,65),labels = c("Child","Youth","Adult","Mature"))
+noMiceDataset_AGE$AGEcat
+
+Agehealth1 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P1)
+Agehealth2 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P2)
+Agehealth3 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P3)
+Agehealth4 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P4)
+Agehealth5 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P5)
+
+
+ca.age.health1 <- CA(Agehealth1, graph = TRUE)
+ca.age.health1
+ca.age.health2 <- CA(Agehealth2, graph = TRUE)
+ca.age.health2
+ca.age.health3 <- CA(Agehealth3, graph = TRUE)
+ca.age.health3
+ca.age.health4 <- CA(Agehealth4, graph = TRUE)
+ca.age.health4
+ca.age.health5 <- CA(Agehealth5, graph = TRUE)
+ca.age.health5
+
+Age.Inten1 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q18I3)
+Age.Inten2 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q18I2)
+Age.Inten3 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q18I1)
+
+ca.age.inten1 <- CA(Age.Inten1,graph = TRUE)
+ca.age.inten1
+ca.age.inten2 <- CA(Age.Inten2,graph = TRUE)
+ca.age.inten2
+ca.age.inten3 <- CA(Age.Inten3,graph = TRUE)
+ca.age.inten3
+
+Age.Atti1 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C1)
+Age.Atti2 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C2)
+Age.Atti3 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C3)
+Age.Atti4 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C4)
+Age.Atti5 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C5)
+
+ca.age.att1 <- CA(Age.Atti1,graph = TRUE)
+ca.age.att1
+ca.age.att2 <- CA(Age.Atti2,graph = TRUE)
+ca.age.att2
+ca.age.att3 <- CA(Age.Atti3,graph = TRUE)
+ca.age.att3
+ca.age.att4 <- CA(Age.Atti4,graph = TRUE)
+ca.age.att4
+ca.age.att5 <- CA(Age.Atti5,graph = TRUE)
+ca.age.att5
 
 
 
