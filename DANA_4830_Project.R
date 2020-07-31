@@ -1,13 +1,7 @@
 # Checking Accuracy of Data
 
 #Import the data and make copy of data
-
-
 master <- read.csv("Data-screening-1 (1).csv")
-
-
-
-
 
 
 mastercopy <- master
@@ -45,7 +39,7 @@ library("stringr")
 mastercopy$Age <-str_replace_all(mastercopy$Age, "[abcdefgfhijklmanopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]", NA_character_)
 mastercopy$Age <-strtoi(mastercopy$Age)
 #It makes no sense if the person age more than 100 or less tha 5 contribute in survey.
-mastercopy$Age[(mastercopy["Age"] < 5)] = NA
+mastercopy$Age[(mastercopy["Age"] < 12)] = NA
 mastercopy$Age[(mastercopy["Age"] >100)] =NA 
 #Income
 #as one enntry is "30000" it falls under the category of 3 so to change it.
@@ -121,7 +115,23 @@ lapply(mastercopy,unique)[66:71]
 #As the accuarcy is correct But last part is not recorded. Also, we need to update the columns names.
 
 names(mastercopy)[66:71] <- c("Q19C1","Q19C2","Q19C3","Q19C4","Q19c5","Q19c6")
+
 dim((mastercopy))
+#Changing type of 12 into numeric as we need to change the its vale
+mastercopy$Q12C1<- as.numeric(mastercopy$Q12C1)
+mastercopy$Q12C2<- as.numeric(mastercopy$Q12C2)
+mastercopy$Q12C3<- as.numeric(mastercopy$Q12C3)
+mastercopy$Q12C4<- as.numeric(mastercopy$Q12C4)
+mastercopy$Q12C5<- as.numeric(mastercopy$Q12C5)
+mastercopy$Q12C6<- as.numeric(mastercopy$Q12C6)
+
+#Changing Q12 values to 1
+mastercopy$Q12C1[mastercopy$Q12C1 > 1] = 1
+mastercopy$Q12C2[mastercopy$Q12C2 > 1] = 1
+mastercopy$Q12C3[mastercopy$Q12C3 > 1] = 1
+mastercopy$Q12C4[mastercopy$Q12C4 > 1] = 1
+mastercopy$Q12C5[mastercopy$Q12C5 > 1] = 1
+mastercopy$Q12C6[mastercopy$Q12C6 > 1] = 1
 
 ## Accuracy done.
 
@@ -197,6 +207,7 @@ library(mice)
 nomissdf= mice(mastercopy1)
 df1=complete(nomissdf,1)
 summary(df1)
+library(naniar)
 vis_miss(df1)
 
 mastercopy2 <- df1
@@ -362,44 +373,6 @@ fviz_eig(res.pca6)
 fviz_pca_var(res.pca6,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 ####Influence on gender on knowledge
 
-Gender_Knowledge =mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")]
-library(MASS)
-Gender_Knowledge_DA <- lda(Gender~q1k+q2k+q3k+q4k+Q6K+Q7K+Q8K+Q9K,data=Gender_Knowledge)
-Gender_Knowledge_DA
-
-#LDA preduction
-lda.testing <- predict(Gender_Knowledge_DA)
-#confusion matrix
-accuracy <- table(lda.testing$class,mastercopy2$Gender)
-accuracy
-sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
-
-#Regression Try
-
-# Fit the full model 
-full.model <- lm(Gender ~., data = mastercopy2[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
-#Stepwise regression
-library(MASS)
-step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
-summary(step.model)
-#CAnt do regression as it has very low p value.
-
-#Make another data to try logistic regression
-mastercopy3 <- mastercopy2
-mastercopy3$Gender[mastercopy3$Gender==2]=0
-
-#Logistic regression
-Reg_log_Gender_Know<- glm(Gender~ factor(q1k)+factor(q2k)+factor(q3k)+factor(q4k)+factor(Q6K)
-                          +factor(Q7K)+factor(Q8K)+factor(Q9K), family=binomial, data=mastercopy3[,c("Gender","q1k","q2k","q3k","q4k","Q6K","Q7K","Q8K","Q9K")])
-summary(Reg_log_Gender_Know)
-
-pchisq(1110.5-1036.7, df = 982-963, lower.tail = FALSE)
-
-Gender_q1k <- mastercopy2[,c("Gender","q1k")] 
-#CHECKING ANSWR OF GENDER VS Q1k
-unique(Gender_q1k)
-
-
 #Checking answer of gender vs Knowledge
 table(mastercopy2[,c("Gender","q1k")])
 #Percentage for gender vs q1k
@@ -562,28 +535,17 @@ decidefactor <- fa.parallel(data,fm ='ml', fa = 'fa')
 
 #Try 1
 
-factana1 <- fa(data,nfactors =11)
-fa.diagram(factana1)
+factana11 <- factanal(data,factors =11)
+factana11
+fact_ana11 <- fa(data,nfactors =11)
+fa.diagram(fact_ana11)
+summary(fact_ana11)
 
-<<<<<<< HEAD
-NewDATA<- mastercopy2[,-(1:5)]
-Data_only_Q <- NewDATA[,-(56:61)]
 
-fact_An <- factanal(Data_only_Q, factors = 20)
-fact_An
-
-library(psych)
-fa.diagram(fact_An$loadings)
-=======
-library(psych)
-fa.diagram(factana1$loadings)
-
->>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
-install.packages("GPArotation")
 library(GPArotation)
 factanatry1 <- fa(data,nfactors = 11)
 library(psych)
-fa.diagram(factanatry1)
+fa.diagram(factana1)
 colnames(factanatry1$loadings)
 
 colnames(factanatry1$loadings)=c("PlasBeh",
@@ -599,27 +561,12 @@ colnames(factanatry1$loadings)=c("PlasBeh",
                         "Diff")
 #As the p value is very low so model is not good.
 
-#keeping only correlated variables keeping cutoff 0.1
-install.packages("caret")
+
 library('caret')
-<<<<<<< HEAD
-df_cor = findCorrelation(cor(Data_only_Q), cutoff=0.30)
-df_cor
-hc= sort(df_cor)
-data = Data_only_Q[, c(hc)]
+#<<<<<<< HEAD
 
-factana <- fa(data,nfactors = 8)
-=======
-data_corelated_try1 = findCorrelation(cor(data), cutoff=0.1)
-data_corelated_try1
-hc= sort(data_corelated_try1)
-data_only_corelated_try1 = data[, c(hc)]
-dim(data_only_corelated_try1)
-#We are left with only 42 variables.
 
-factana <- fa(data_only_corelated_try1,nfactors = 11)
->>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
-fa.diagram(factana)
+
 #Model Donot improve much So we need to increase the cutoff
 
 #keeping only correlated variables keeping cutoff 0.2
@@ -630,22 +577,46 @@ data_only_corelated_try2 = data[, c(hc)]
 dim(data_only_corelated_try2)
 #We are left with only 31 variables.
 
-<<<<<<< HEAD
-table(mastercopy2$Gender,mastercopy2$q1k)
+#Decide number of factors
+#DEcide number of initial factors
+library(psych)
+decidefactor <- fa.parallel(data_only_corelated_try2,fm ='ml', fa = 'fa')
+#According to parallel analysis we have 10 factors
 
-mastercopy2$Age
 
-chisq.test(table(mastercopy2$Gender,mastercopy2$q1k),correct = FALSE)  #p-value = 0.0006377 , Reject NUll it means gender and quetion 1 is dependent on each other. 
+factana11_0.2_1 <- factanal(data_only_corelated_try2, factors = 10)
+factana11_0.2_1
+fact_ana11_0.2_1 <- fa(data_only_corelated_try2,nfactors =10)
+summary(fact_ana11_0.2_1)
+fa.diagram(fact_ana11_0.2_1)
+
+factana11_0.2_2 <- factanal(data_only_corelated_try2, factors = 9)
+factana11_0.2_2
+fact_ana11_0.2_2 <- fa(data_only_corelated_try2,nfactors =9)
+summary(fact_ana11_0.2_2)
+fa.diagram(fact_ana11_0.2_2)
+
+factana11_0.2_3 <- factanal(data_only_corelated_try2, factors = 8)
+factana11_0.2_3
+fact_ana11_0.2_3 <- fa(data_only_corelated_try2,nfactors =8)
+summary(fact_ana11_0.2_3)
+fa.diagram(fact_ana11_0.2_3)
+
+factana11_0.2_4 <- factanal(data_only_corelated_try2, factors = 7)
+factana11_0.2_4
+fact_ana11_0.2_4 <- fa(data_only_corelated_try2,nfactors =7)
+summary(fact_ana11_0.2_4)
+fa.diagram(fact_ana11_0.2_4)
+
+
+#<<<<<<< HEAD
 
 
 colnames(fa_psych$loadings) <- c("Behaviour[Reduce]", "Intention[Reduce]","Personal Accountability[Reduce]",
                                  "Health Concern [Att.]", "Social Conditional Intention",
                                  "Impediments","Environemental Concern [Att.]")
 
-=======
-factana <- fa(data_only_corelated_try2,nfactors = 11)
-fa.diagram(factana)
-#Model Improves but we will try with cut off 0.3
+#Model did not Improves but we will try with cut off 0.3
 
 #keeping only correlated variables keeping cutoff 0.3
 data_corelated_try3 = findCorrelation(cor(data), cutoff=0.3)
@@ -653,44 +624,167 @@ data_corelated_try3
 hc= sort(data_corelated_try3)
 data_only_corelated_try3 = data[, c(hc)]
 dim(data_only_corelated_try3)
-#We are left with only 16 variables.
+#We are left with only 29 variables.
 
-#First model with 11 factors
-fact_ana2 <- factanal(data_only_corelated_try3, factors = 11)
-fact_ana2
-factana2 <- fa(data_only_corelated_try3,nfactors =11)
-fa.diagram(factana2)
+#Decide number of factors
+#DEcide number of initial factors
+library(psych)
+decidefactor <- fa.parallel(data_only_corelated_try3,fm ='ml', fa = 'fa')
+#According to parallel analysis we have 9 factors
 
-#Second model with 10 factors
-fact_ana3 <- factanal(data_only_corelated_try3, factors = 10)
-fact_ana3
-factana3 <- fa(data_only_corelated_try3,nfactors =10)
-fa.diagram(factana3)
+#First model with 9 factors
+factana11_1 <- factanal(data_only_corelated_try3, factors = 9)
+factana11_1
+fact_ana11_1 <- fa(data_only_corelated_try3,nfactors =9)
+summary(fact_ana11_1)
+fa.diagram(fact_ana11_1)
 
-#Third model with 9 factors
-fact_ana4 <- factanal(data_only_corelated_try3, factors = 9)
-fact_ana4
-factana4 <- fa(data_only_corelated_try3,nfactors =9)
-fa.diagram(factana4)
-colnames(fact_ana4$loadings) =c()
+#Second model with 8 factors
+factana11_2 <- factanal(data_only_corelated_try3, factors = 8)
+factana11_2
+fact_ana11_2 <- fa(data_only_corelated_try3,nfactors =8)
+summary(fact_ana11_2)
+fa.diagram(fact_ana11_2)
+
+#Third model with 7 factors
+factana11_3 <- factanal(data_only_corelated_try3, factors = 7)
+factana11_3
+fact_ana11_3 <- fa(data_only_corelated_try3,nfactors =7)
+summary(fact_ana11_3)
+fa.diagram(fact_ana11_3)
 
 
-#Fourth model with 8 factors
-fact_ana5 <- factanal(data_only_corelated_try3, factors = 8)
-fact_ana5
-factana5 <- fa(data_only_corelated_try3,nfactors =8)
-fa.diagram(factana5)
+#Forth model with 6 factors
+factana11_4 <- factanal(data_only_corelated_try3, factors = 6)
+factana11_4
+fact_ana11_4 <- fa(data_only_corelated_try3,nfactors =6)
+summary(fact_ana11_4)
+fa.diagram(fact_ana11_4)
+
+#Fifth model with 5 factors
+factana11_5 <- factanal(data_only_corelated_try3, factors = 5)
+factana11_5
+fact_ana11_5 <- fa(data_only_corelated_try3,nfactors =5)
+summary(fact_ana11_5)
+fa.diagram(fact_ana11_5)
 
 
-colnames(factana4$loadings) <- c("RecBeh",
-                                 "ManRes",
-                               "behKnow",
-                               "SocAff",
-                               "DiscNylon",
-                               "Conhea",
-                               "Conenv",
-                               "PerBeh",
-                               "KnowSou")
+#On the Dataset without mice
+
+Nomice <- na.omit(mastercopy1)
+
+#Select Only corelated columns with cut of of 0.3
+#keeping only correlated variables keeping cutoff 0.3
+NomiceCor = findCorrelation(cor(Nomice), cutoff=0.3)
+hc= sort(NomiceCor)
+Nomicecor = Nomice[, c(hc)]
+dim(Nomicecor)
+#We are left with only 29 variables.
+
+#Decide number of factors
+#DEcide number of initial factors
+library(psych)
+decidefactor <- fa.parallel(Nomicecor,fm ='ml', fa = 'fa')
+#First model with 10 factors
+factnomice10 <- factanal(Nomicecor, factors = 10)
+factnomice10
+factnomice_10 <- fa(Nomicecor,nfactors =10)
+summary(factnomice_10)
+fa.diagram(factnomice_10)
+
+#Second model with 9 factors
+factnomice9 <- factanal(Nomicecor, factors = 9)
+factnomice9
+factnomice_9 <- fa(Nomicecor,nfactors =9)
+summary(factnomice_9)
+fa.diagram(factnomice_9)
+
+#Third model with 8 factors
+factnomice8 <- factanal(Nomicecor, factors = 8)
+factnomice8
+factnomice_8 <- fa(Nomicecor,nfactors =8)
+summary(factnomice_8)
+fa.diagram(factnomice_8)
+
+
+#Forth model with 7 factors
+factnomice7 <- factanal(Nomicecor, factors = 7)
+factnomice7
+factnomice_7 <- fa(Nomicecor,nfactors =7)
+summary(factnomice_7)
+fa.diagram(factnomice_7)
+
+#Fifth model with 6 factors
+factnomice6 <- factanal(Nomicecor, factors = 6)
+factnomice6
+factnomice_6 <- fa(Nomicecor,nfactors =6)
+summary(factnomice_6)
+fa.diagram(factnomice_6)
+
+######LDA PREDICTING GENDER ON THE BASIS OF THEIR PLASTIC RELATED BEHAVIOUR
+
+Gender_beh =mastercopy2[,c("Gender","Q17P1","Q17P2","Q17P3","Q17P4","Q17P5")]
+library(MASS)
+Gender_beh_DA <- lda(Gender~Q17P1+Q17P2+Q17P3+Q17P4+Q17P5,data=Gender_beh)
+Gender_beh_DA
+
+#LDA preduction
+lda.testing <- predict(Gender_beh_DA)
+#confusion matrix
+accuracy <- table(lda.testing$class,Gender_beh$Gender)
+accuracy
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
+
+#Regression Try
+
+# Fit the full model 
+full.model <- lm(Gender ~., data = Gender_beh)
+summary(full.model)
+#Stepwise regression
+library(MASS)
+step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+summary(step.model)
+#CAnt do regression as it has very low p value.
+
+# Gender and attitude
+Gender_att =mastercopy2[,c("Gender","Q10C1","Q10C2","Q10C3","Q10C4","Q10C5")]
+library(MASS)
+Gender_att_DA <- lda(Gender~Q10C1+Q10C2+Q10C3+Q10C4+Q10C5,data=Gender_att)
+Gender_att_DA
+
+#LDA preduction
+lda.testing <- predict(Gender_att_DA)
+#confusion matrix
+accuracy <- table(lda.testing$class,Gender_att$Gender)
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
+
+
+######LDA PREDICTING EDUCATION ON THE BASIS OF THEIR PLASTIC RELATED BEHAVIOUR
+
+Edu_beh =mastercopy2[,c("Education","Q17P1","Q17P2","Q17P3","Q17P4","Q17P5")]
+library(MASS)
+Edu_beh_DA <- lda(Education~Q17P1+Q17P2+Q17P3+Q17P4+Q17P5,data=Edu_beh)
+Edu_beh_DA
+
+#LDA preduction
+lda.testing <- predict(Edu_beh_DA)
+#confusion matrix
+accuracy <- table(lda.testing$class,Edu_beh$Education)
+accuracy
+sum(accuracy[row(accuracy) == col(accuracy)]) / sum(accuracy)
+
+#Regression Try
+
+# Fit the full model 
+full.model <- lm(Education ~., data = Edu_beh)
+summary(full.model)
+#Stepwise regression
+library(MASS)
+step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+summary(step.model)
+#CAnt do regression as it has very low p value.
+
+
 
 # Chi Square Analysis
 
@@ -802,192 +896,143 @@ chisq.test(table(mastercopy2$Income,mastercopy2$Q5K4),correct = FALSE)
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K5),correct = FALSE)  
 chisq.test(table(mastercopy2$Income,mastercopy2$Q5K1),correct = FALSE) 
 
+#Corrospondance Analysis
+library(MASS)
+library("FactoMineR")
+library("factoextra")
+
+Edu.health1 <- table(noMiceDataset$Education,noMiceDataset$Q17P1)
+Edu.health2 <- table(noMiceDataset$Education,noMiceDataset$Q17P2)
+Edu.health3 <- table(noMiceDataset$Education,noMiceDataset$Q17P3)
+Edu.health4 <- table(noMiceDataset$Education,noMiceDataset$Q17P4)
+Edu.health5 <- table(noMiceDataset$Education,noMiceDataset$Q17P5)
+
+table(noMiceDataset$Education)
+
+
+ca.edu.health1 <- CA(Edu.health1, graph = TRUE)
+ca.edu.health1
+ca.edu.health2 <- CA(Edu.health2, graph = TRUE)
+ca.edu.health2
+ca.edu.health3 <- CA(Edu.health3, graph = TRUE)
+ca.edu.health3
+ca.edu.health4 <- CA(Edu.health4, graph = TRUE)
+ca.edu.health4
+ca.edu.health5 <- CA(Edu.health5, graph = TRUE)
+ca.edu.health5
+
+Edu.Inten1 <- table(noMiceDataset$Education,noMiceDataset$Q18I3)
+Edu.Inten2 <- table(noMiceDataset$Education,noMiceDataset$Q18I2)
+Edu.Inten3 <- table(noMiceDataset$Education,noMiceDataset$Q18I1)
+
+ca.edu.inten1 <- CA(Edu.Inten1,graph = TRUE)
+ca.edu.inten1
+ca.edu.inten2 <- CA(Edu.Inten2,graph = TRUE)
+ca.edu.inten2
+ca.edu.inten3 <- CA(Edu.Inten3,graph = TRUE)
+ca.edu.inten3
+
+Edu.Atti1 <- table(noMiceDataset$Education,noMiceDataset$Q10C1)
+Edu.Atti2 <- table(noMiceDataset$Education,noMiceDataset$Q10C2)
+Edu.Atti3 <- table(noMiceDataset$Education,noMiceDataset$Q10C3)
+Edu.Atti4 <- table(noMiceDataset$Education,noMiceDataset$Q10C4)
+Edu.Atti5 <- table(noMiceDataset$Education,noMiceDataset$Q10C5)
+
+ca.edu.att1 <- CA(Edu.Atti1,graph = TRUE)
+ca.edu.att1
+ca.edu.att2 <- CA(Edu.Atti2,graph = TRUE)
+ca.edu.att2
+ca.edu.att3 <- CA(Edu.Atti3,graph = TRUE)
+ca.edu.att3
+ca.edu.att4 <- CA(Edu.Atti4,graph = TRUE)
+ca.edu.att4
+ca.edu.att5 <- CA(Edu.Atti5,graph = TRUE)
+ca.edu.att5
+
+Edu.Knw1 <- table(noMiceDataset$Education,noMiceDataset$Q5K1)
+Edu.Knw4 <- table(noMiceDataset$Education,noMiceDataset$Q5K4)
+Edu.Knw5 <- table(noMiceDataset$Education,noMiceDataset$Q5K5)
+
+ca.edu.knw1 <- CA(Edu.Knw1, graph = TRUE)
+ca.edu.knw1
+ca.edu.knw4 <- CA(Edu.Knw4, graph = TRUE)
+ca.edu.knw4
+ca.edu.knw5 <- CA(Edu.Knw5, graph = TRUE)
+ca.edu.knw5
+
+#With Gender
+G.Atti1 <- table(noMiceDataset$Gender,noMiceDataset$Q10C1)
+G.Atti2 <- table(noMiceDataset$Gender,noMiceDataset$Q10C2)
+G.Atti3 <- table(noMiceDataset$Gender,noMiceDataset$Q10C3)
+G.Atti4 <- table(noMiceDataset$Gender,noMiceDataset$Q10C4)
+G.Atti5 <- table(noMiceDataset$Gender,noMiceDataset$Q10C5)
+
+ca.G.att1 <- CA(G.Atti1,graph = TRUE)
+ca.G.att1
+ca.G.att2 <- CA(G.Atti2,graph = TRUE)
+ca.G.att2
+ca.G.att3 <- CA(G.Atti3,graph = TRUE)
+ca.G.att3
+ca.G.att4 <- CA(G.Atti4,graph = TRUE)
+ca.G.att4
+ca.G.att5 <- CA(G.Atti5,graph = TRUE)
+ca.G.att5
+
+
+# With Age
+noMiceDataset_AGE <- noMiceDataset
+noMiceDataset_AGE$AGEcat <- cut(noMiceDataset_AGE$Age, c(12,18,25,40,65),labels = c("Child","Youth","Adult","Mature"))
+noMiceDataset_AGE$AGEcat
+
+Agehealth1 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P1)
+Agehealth2 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P2)
+Agehealth3 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P3)
+Agehealth4 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P4)
+Agehealth5 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset_AGE$Q17P5)
+
+
+ca.age.health1 <- CA(Agehealth1, graph = TRUE)
+ca.age.health1
+ca.age.health2 <- CA(Agehealth2, graph = TRUE)
+ca.age.health2
+ca.age.health3 <- CA(Agehealth3, graph = TRUE)
+ca.age.health3
+ca.age.health4 <- CA(Agehealth4, graph = TRUE)
+ca.age.health4
+ca.age.health5 <- CA(Agehealth5, graph = TRUE)
+ca.age.health5
+
+Age.Inten1 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q18I3)
+Age.Inten2 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q18I2)
+Age.Inten3 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q18I1)
+
+ca.age.inten1 <- CA(Age.Inten1,graph = TRUE)
+ca.age.inten1
+ca.age.inten2 <- CA(Age.Inten2,graph = TRUE)
+ca.age.inten2
+ca.age.inten3 <- CA(Age.Inten3,graph = TRUE)
+ca.age.inten3
+
+Age.Atti1 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C1)
+Age.Atti2 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C2)
+Age.Atti3 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C3)
+Age.Atti4 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C4)
+Age.Atti5 <- table(noMiceDataset_AGE$AGEcat,noMiceDataset$Q10C5)
+
+ca.age.att1 <- CA(Age.Atti1,graph = TRUE)
+ca.age.att1
+ca.age.att2 <- CA(Age.Atti2,graph = TRUE)
+ca.age.att2
+ca.age.att3 <- CA(Age.Atti3,graph = TRUE)
+ca.age.att3
+ca.age.att4 <- CA(Age.Atti4,graph = TRUE)
+ca.age.att4
+ca.age.att5 <- CA(Age.Atti5,graph = TRUE)
+ca.age.att5
 
 
 
 #####################################################################################################################
-
-# without mice FA
-
-
-
-
-No_miceData <- read.csv("final_No_mice.csv")
-
-##Factor Analysis
-
-#Data without question 19
-data_without19 <- No_miceData[,-(61:66)]
-#we delete col 19 as it is not that much important
-
-#Now we also dont need demographic as per requirement of project
-data<-data_without19[,-(1:5)]
-
-# PCA 
-
-# A Demographic and Knowledge 
-View(No_miceData)
-No_miceData[1:19]
-noMicePca <- prcomp(No_miceData[1:19],scale= TRUE)  
-summary(noMicePca)
-
-
-library("factoextra")
-noMiceEig <- get_eigenvalue(noMicePca)
-noMiceEig
-
-dimNomice <- c(1:19)
-
-#Plot the cumulative percentage variance accounted for versus the index of the Components 
-plot(dimNomice, noMiceEig$cumulative.variance.percent, ylab = "Commulative Variance",xlab = "Principal Components")
-
-#StreePlot
-fviz_eig(noMicePca)
-
-#Loading score
-fviz_pca_var(noMicePca,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-
-
-# 
-factana12 <- fa(No_miceData[6:19],nfactors =8)
-fa.diagram(factana12)
-summary(factana12)
-
-factanal12 <- factanal(No_miceData[1:19], factors = 8)
-factanal12
-####
-
-decidefactor <- fa.parallel(No_miceData[6:19],fm ='ml', fa = 'fa')
-#According to parallel analysis we have 11 factors
-
-#As we see by the parallel analysis number of factor should be 11.
-
-#Try 1
-#Third model with 12 factors
-factana7 <- fa(data,nfactors =12)
-fa.diagram(factana7)
-summary(factana7)
-
-library(psych)
-fa.diagram(factana7$loadings)
-
-
-factanal7 <- factanal(data, factors = 12)
-factanal7
-
-install.packages("GPArotation")
-library(GPArotation)
-factana8 <- fa(data,nfactors = 11)
-fa.diagram(factana8)
-
-summary(factana8)
-
-factanal8 <- factanal(data, factors = 11)
-factanal8
-
-#keeping only correlated variables keeping cutoff 0.1
-install.packages("caret")
-library('caret')
-data_corelatedNoMice = findCorrelation(cor(data), cutoff=0.3)
-data_corelatedNoMice
-hc1= sort(data_corelatedNoMice)
-data_corelatedNoMice = data[, c(hc1)]
-dim(data_corelatedNoMice)
-#We are left with only 29 variables.
-
-
-# trying with 11 Factors 
-factana9 <- fa(data_corelatedNoMice,nfactors = 11)
-fa.diagram(factana9)
-summary(factana9)
-factanal9 <- factanal(data_corelatedNoMice, factors = 11)
-factanal9
-colnames(factana9$loadings) <- c("reduInt",
-                                  "MngRspb",
-                                  "RefNyln",
-                                  "SocAfct",
-                                  "Atitud",
-                                  "natConc",
-                                  "ruleAbid",
-                                  "PercBeh",
-                                  "AvoidInt",
-                                 "source",
-                                 "Environmentlist")
-
-# Trying with 10 factors
-factanal10 <- factanal(data, factors = 10)
-factanal10
-
-factana10 <- fa(data,nfactors =10)
-summary(factana10)
-fa.diagram(factana10)
-
-
-#trying with 9 factors 
-factana11 <- fa(data,nfactors =9)
-fa.diagram(factana11)
-summary(factana11)
-
-factanal11 <- factanal(data, factors = 9)
-factanal11
-
-
-#trying with 8 factors 
-factana11 <- fa(data,nfactors =8)
-fa.diagram(factana11)
-summary(factana11)
-
-factanal11 <- factanal(data, factors = 8)
-factanal11
-colnames(factana11$loadings)
-colnames(factana11$loadings) <- c("RecBeh",
-                                  "MngRspb",
-                                  "Rspb",
-                                  "SocAfct",
-                                  "HltPrcp",
-                                  "EnvCons",
-                                  "EnvMntlst",
-                                  "PercBeh",
-                                  "Knldge")
-
-fa.diagram(factana11)
-
-
-############
-# try with corelated 
-factana12 <- fa(data_corelatedNoMice,nfactors = 12)
-fa.diagram(factana12)
-summary(factana12)
-factana12 <- factanal(data_corelatedNoMice, factors = 12)
-factana12
-
-# try with corelated 
-factana13 <- fa(data_corelatedNoMice,nfactors = 11)
-fa.diagram(factana13)
-summary(factana13)
-factanal13 <- factanal(data_corelatedNoMice, factors = 11)
-factanal13
-
-# try with corelated 
-factana14 <- fa(data_corelatedNoMice,nfactors = 10)
-fa.diagram(factana14)
-summary(factana14)
-factanal14 <- factanal(data_corelatedNoMice, factors = 10)
-factanal14
-
-# try with corelated 
-factana15 <- fa(data_corelatedNoMice,nfactors = 9)
-fa.diagram(factana15)
-summary(factana15)
-factanal15 <- factanal(data_corelatedNoMice, factors = 9)
-factanal15
-
-# try with corelated 
-factana16 <- fa(data_corelatedNoMice,nfactors = 8)
-fa.diagram(factana16)
-summary(factana16)
-factanal16 <- factanal(data_corelatedNoMice, factors = 8)
-factanal16
 #############################################################################################################################
 View(data_only_corelated_try3)
 data_only_corelated_try3
@@ -1066,4 +1111,4 @@ ggheatmap +
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))
 
->>>>>>> 2dac7486110de8cac707b95eb128888a3a536102
+
