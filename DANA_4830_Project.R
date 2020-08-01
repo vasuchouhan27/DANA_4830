@@ -1062,3 +1062,50 @@ Nomice1$knwSum <- Nomice1$knwSum + Nomice1$sum5
 
 write.csv(Nomice1,"Nomice1.csv")
 
+
+
+
+#########
+
+
+
+
+# Copy 
+Nomice2 <- Nomice1
+
+View(Nomice2)
+
+Nomice2$AGEcat <- cut(Nomice2$Age, c(12,18,25,40,65),labels = c("Child","Youth","Adult","Mature"))
+
+write.csv(Nomice2,"Nomice2.csv")
+
+# remove knowledge variable just kept total knowledge score 
+Nomice2 <- Nomice2[-c(7:20,69)]
+
+# try factor analysis
+
+deci <- fa.parallel(Nomice2, fm ='ml', fa = 'fa')
+
+try111 <- factanal(Nomice2,factors =13)
+try111
+
+
+try222 <- fa(Nomice2,nfactors =20)
+fa.diagram(try222)
+
+
+#keeping only correlated variables keeping cutoff 0.3
+noMiceCorrData = findCorrelation(cor(Nomice2), cutoff=0.1)
+noMiceCorrData
+hc= sort(noMiceCorrData)
+noMiceCorrData = Nomice2[, c(hc)]
+dim(noMiceCorrData)
+View(noMiceCorrData)
+#try based upon parallal analysis 
+deci2 <- fa.parallel(noMiceCorrData, fm ='ml', fa = 'fa')
+
+
+try113 <- factanal(noMiceCorrData,factors =15)
+try113
+try223 <- fa(noMiceCorrData,nfactors =6)
+fa.diagram(try223)
