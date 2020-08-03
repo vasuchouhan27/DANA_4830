@@ -312,6 +312,7 @@ plot(dimT4, eig.val4$cumulative.variance.percent, ylab = "Commulative Variance",
 #StreePlot
 fviz_eig(res.pca4)
 
+
 #Loading Score
 fviz_pca_var(res.pca4,axes = c(1,2),col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
 
@@ -1109,3 +1110,4 @@ try113 <- factanal(noMiceCorrData,factors =15)
 try113
 try223 <- fa(noMiceCorrData,nfactors =6)
 fa.diagram(try223)
+
